@@ -1,0 +1,8 @@
+fib :: Int -> Int
+fib n = let fibHelper :: Int -> Int -> Int -> Int
+            fibHelper n n1 n2 = if eq n 0
+                                    then n1
+                                    else fibHelper (sub n 1) n2 (add n1 n2)
+        in fibHelper n 0 1
+
+fib 5 -- output: 5
