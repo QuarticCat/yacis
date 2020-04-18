@@ -209,8 +209,8 @@ struct Type:
     list<sor<Paren<Type>, TypeName>, seq<ISep0, one<'-'>, one<'>'>, CSep0>> {};
 
 /**
- * @brief Application expression. Note that single expression, variable or
- *        literal is also application expression in paring stage.
+ * @brief Application expression. Single expression, variable or literal is also
+ *        application expression in paring stage.
  */
 struct ApplExpr: list<sor<Paren<Expression>, VarName, Literal>, ISep> {};
 
@@ -262,8 +262,7 @@ struct LambdaExpr:
             Expression> {};
 
 /**
- * @brief All kinds of expressions. Note that some cases are contained in
- *        ApplExpr.
+ * @brief All kinds of expressions. Some cases are contained in ApplExpr.
  */
 struct Expression: sor<ApplExpr, CondExpr, LambdaExpr, LetExpr> {};
 
