@@ -3,7 +3,7 @@
 
 #include "tao/pegtl.hpp"
 
-namespace yacis::parse {
+namespace yacis::grammar {
 
 struct State {
     int32_t paren_level;
@@ -112,18 +112,17 @@ struct LParen {
  */
 struct RParen {
     template<apply_mode A,
-        rewind_mode M,
-        template<typename...>
-        class Action,
-        template<typename...>
-        class Control,
-        typename Input>
+             rewind_mode M,
+             template<typename...>
+             class Action,
+             template<typename...>
+             class Control,
+             typename Input>
     [[nodiscard]] static bool match(Input& in, State& state) {
         if (one<')'>::match<A, M, Action, Control>(in, state))
             --state.paren_level;
     }
 };
-
 
 /**
  * @brief Consumes a pair of parenthesis with designated content within it.
@@ -342,6 +341,6 @@ using internal::Output;
 using internal::Grammar;
 // clang-format on
 
-}  // namespace yacis::parse
+}  // namespace yacis::grammar
 
 #endif  // YACIS_GRAMMAR_HPP_
