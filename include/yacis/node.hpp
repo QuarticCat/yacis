@@ -149,7 +149,7 @@ using ApplExprNode = Node<NodeTag::kApplExpr>;
 using CondExprNode = Node<NodeTag::kCondExpr>;
 using LetExprNode = Node<NodeTag::kLetExpr>;
 using LambdaParamNode = Node<NodeTag::kLambdaParam>;
-using LambdaNode = Node<NodeTag::kLambdaExpr>;
+using LambdaExprNode = Node<NodeTag::kLambdaExpr>;
 using ExpressionNode = Node<NodeTag::kExpression, ExpressionInfo>;
 
 using TypeAliasNode = Node<NodeTag::kTypeAlias>;
