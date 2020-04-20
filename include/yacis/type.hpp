@@ -1,7 +1,6 @@
 #ifndef YACIS_TYPE_HPP_
 #define YACIS_TYPE_HPP_
 
-#include <initializer_list>
 #include <vector>
 
 namespace yacis::ast {

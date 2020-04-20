@@ -60,6 +60,10 @@ class BaseNode {
     BaseNode& operator=(BaseNode&&) = delete;
     virtual ~BaseNode() = default;
 
+    /**
+     * @brief Construct base node with given base node and node tag. This
+     *        constructor is to simplify the construction of derived nodes.
+     */
     BaseNode(BaseNode&& base_node, NodeTag node_tag);
 
     template<typename Rule, typename Input, typename... States>
