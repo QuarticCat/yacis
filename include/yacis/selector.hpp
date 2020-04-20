@@ -154,10 +154,20 @@ template<>
 struct Selector<grammar::ApplExpr>: std::true_type {
     template<typename... States>
     static void transform(std::unique_ptr<BaseNode>& n, States&&...) {
-        if (n->children.size() == 1)
+        if (n->children.size() == 1) {
             fold_node(n);
-        else
+        } else {
+            for (auto&& i : n->children) {
+                if (i->tag != NodeTag::kExpression) {
+                    auto t = std::move(i);
+                    i = std::make_unique<ExpressionNode>(BaseNode());
+                    i->m_begin = t->m_begin;
+                    i->m_end = t->m_end;
+                    i->children.emplace_back(std::move(t));
+                }
+            }
             convert_node<ApplExprNode>(n);
+        }
     }
 };
 
