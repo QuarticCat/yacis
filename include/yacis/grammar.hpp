@@ -5,9 +5,11 @@
 
 namespace yacis::grammar {
 
-struct State {
-    int32_t paren_level;
-};
+// Wait for PEGTL to fix bugs and improve support for custom rules.
+
+// struct State {
+//    int32_t paren_level;
+//};
 
 namespace internal {
 
@@ -35,110 +37,118 @@ struct CSep: plus<sor<space, Comment>> {};
  */
 struct CSep0: star<sor<space, Comment>> {};
 
-/**
- * @brief Inline separator helper. Consumes one or more ' ' or '\t'.
- */
-struct ISepHelper: plus<blank> {};
+///**
+// * @brief Inline separator helper. Consumes one or more ' ' or '\t'.
+// */
+// struct ISepHelper: plus<blank> {};
+//
+///**
+// * @brief Alternative inline separator helper. Consumes zero or more ' ' or
+// *        '\t'.
+// */
+// struct ISep0Helper: star<blank> {};
+//
+///**
+// * @brief Inline separator. But behaves as CSep when within parenthesis.
+// */
+// struct ISep {
+//    template<apply_mode A,
+//             rewind_mode M,
+//             template<typename...>
+//             class Action,
+//             template<typename...>
+//             class Control,
+//             typename Input>
+//    [[nodiscard]] static bool match(Input& in, State& state) {
+//        if (state.paren_level > 0)
+//            return CSep::match<A, M, Action, Control>(in, state);
+//        else
+//            return ISepHelper::match<A, M, Action, Control>(in, state);
+//    }
+//};
+//
+///**
+// * @brief Alternative inline separator. But behaves as CSep0 when within
+// *        parenthesis.
+// */
+// struct ISep0 {
+//    template<apply_mode A,
+//             rewind_mode M,
+//             template<typename...>
+//             class Action,
+//             template<typename...>
+//             class Control,
+//             typename Input>
+//    [[nodiscard]] static bool match(Input& in, State& state) {
+//        if (state.paren_level > 0)
+//            return CSep0::match<A, M, Action, Control>(in, state);
+//        else
+//            return ISep0Helper::match<A, M, Action, Control>(in, state);
+//    }
+//};
 
 /**
- * @brief Alternative inline separator helper. Consumes zero or more ' ' or
- *        '\t'.
+ * @brief Inline separator. Consumes one or more ' ' or '\t'.
  */
-struct ISep0Helper: star<blank> {};
+struct ISep: plus<blank> {};
 
 /**
- * @brief Inline separator. But behaves as CSep when within parenthesis.
+ * @brief Alternative inline separator. Consumes zero or more ' ' or '\t'.
  */
-struct ISep {
-    template<apply_mode A,
-             rewind_mode M,
-             template<typename...>
-             class Action,
-             template<typename...>
-             class Control,
-             typename Input>
-    [[nodiscard]] static bool match(Input& in, State& state) {
-        if (state.paren_level > 0)
-            return CSep::match<A, M, Action, Control>(in, state);
-        else
-            return ISepHelper::match<A, M, Action, Control>(in, state);
-    }
-};
-
-/**
- * @brief Alternative inline separator. But behaves as CSep0 when within
- *        parenthesis.
- */
-struct ISep0 {
-    template<apply_mode A,
-             rewind_mode M,
-             template<typename...>
-             class Action,
-             template<typename...>
-             class Control,
-             typename Input>
-    [[nodiscard]] static bool match(Input& in, State& state) {
-        if (state.paren_level > 0)
-            return CSep0::match<A, M, Action, Control>(in, state);
-        else
-            return ISep0Helper::match<A, M, Action, Control>(in, state);
-    }
-};
+struct ISep0: star<blank> {};
 
 /**
  * @brief Consumes zero or more ' ' or '\t' or comment and an eol/eof.
  */
-struct ToEolf: seq<star<blank>, opt<Comment>, eolf> {};
+struct ToEolf: seq<ISep0, opt<Comment>, eolf> {};
 
-/**
- * @brief Consumes a left parenthesis and add 1 to paren_level.
- */
-struct LParen {
-    template<apply_mode A,
-             rewind_mode M,
-             template<typename...>
-             class Action,
-             template<typename...>
-             class Control,
-             typename Input>
-    [[nodiscard]] static bool match(Input& in, State& state) {
-        if (one<'('>::match<A, M, Action, Control>(in, state))
-            ++state.paren_level;
-    }
-};
-
-/**
- * @brief Consumes a right parenthesis and subtract 1 from paren_level.
- */
-struct RParen {
-    template<apply_mode A,
-             rewind_mode M,
-             template<typename...>
-             class Action,
-             template<typename...>
-             class Control,
-             typename Input>
-    [[nodiscard]] static bool match(Input& in, State& state) {
-        if (one<')'>::match<A, M, Action, Control>(in, state))
-            --state.paren_level;
-    }
-};
+///**
+// * @brief Consumes a left parenthesis and add 1 to paren_level.
+// */
+// struct LParen {
+//    template<apply_mode A,
+//             rewind_mode M,
+//             template<typename...>
+//             class Action,
+//             template<typename...>
+//             class Control,
+//             typename Input>
+//    [[nodiscard]] static bool match(Input& in, State& state) {
+//        if (one<'('>::match<A, M, Action, Control>(in, state))
+//            ++state.paren_level;
+//    }
+//};
+//
+///**
+// * @brief Consumes a right parenthesis and subtract 1 from paren_level.
+// */
+// struct RParen {
+//    template<apply_mode A,
+//             rewind_mode M,
+//             template<typename...>
+//             class Action,
+//             template<typename...>
+//             class Control,
+//             typename Input>
+//    [[nodiscard]] static bool match(Input& in, State& state) {
+//        if (one<')'>::match<A, M, Action, Control>(in, state))
+//            --state.paren_level;
+//    }
+//};
+//
+///**
+// * @brief Consumes a pair of parenthesis with designated content within it.
+// * @tparam Content The content that within the parenthesis.
+// */
+// template<typename Content>
+// using Paren = seq<LParen, CSep0, Content, CSep0, RParen>;
 
 /**
  * @brief Consumes a pair of parenthesis with designated content within it.
  * @tparam Content The content that within the parenthesis.
  */
 template<typename Content>
-struct Paren: seq<LParen, CSep0, Content, CSep0, RParen> {};
-
-/**
- * @brief Behaves as Paren<Content> if LParen is matched, otherwise only matches
- *        designated content.
- * @tparam Content The content that within the parenthesis.
- */
-template<typename Content>
-struct MaybeParen:
-    if_then_else<LParen, seq<CSep0, Content, CSep0, RParen>, Content> {};
+using Paren = seq<one<'('>, CSep0, Content, CSep0, one<')'>>;
 
 /**
  * @brief Int literal. Consumes one or more digits.
@@ -309,11 +319,6 @@ using internal::CSep0;
 using internal::ISep;
 using internal::ISep0;
 using internal::ToEolf;
-
-using internal::LParen;
-using internal::RParen;
-using internal::Paren;
-using internal::MaybeParen;
 
 using internal::IntLit;
 using internal::BoolLit;
