@@ -21,7 +21,7 @@ void convert_node(std::unique_ptr<BaseNode>& n) {
 }
 
 /**
- * Get node reference of casted n.
+ * @brief Get node reference of casted n.
  * @tparam Node Target node type
  * @param n Node ptr to be casted
  * @return Node reference of casted n.
