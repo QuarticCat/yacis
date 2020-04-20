@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "tao/pegtl.hpp"
+#include "yacis/symbol_table.hpp"
 #include "yacis/type.hpp"
 
 namespace yacis::ast {
@@ -52,6 +53,7 @@ class BaseNode {
     children_t children;
     iterator_t m_begin;
     iterator_t m_end;
+    SymbolTable<Type> type_table;
 
     BaseNode() = default;
     BaseNode(const BaseNode&) = delete;

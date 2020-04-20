@@ -8,6 +8,7 @@ BaseNode::BaseNode(BaseNode&& base_node, NodeTag node_tag):
     tag(node_tag),
     children(std::move(base_node.children)),
     m_begin(base_node.m_begin),
-    m_end(base_node.m_end){};
+    m_end(base_node.m_end),
+    type_table(base_node.type_table){};
 
 }  // namespace yacis::ast
