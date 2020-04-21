@@ -153,7 +153,7 @@ using Paren = seq<one<'('>, CSep0, Content, CSep0, one<')'>>;
 /**
  * @brief Int literal. Consumes one or more digits.
  */
-struct IntLit: plus<digit> {};
+struct IntLit: seq<opt<one<'-'>>, plus<digit>> {};
 
 /**
  * @brief Bool literal. Consumes "True" or "False".

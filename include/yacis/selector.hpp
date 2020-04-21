@@ -41,10 +41,16 @@ struct Selector<grammar::IntLit>: std::true_type {
         convert_node<IntLitNode>(n);
         auto& node = get_node<IntLitNode>(n);
 
-        node.info.value = 0;
+        uint64_t num = 0;
+        bool is_negative = false;
         const char* b = node.m_begin.data;
         const char* e = node.m_end.data;
-        for (; b != e; ++b) node.info.value = node.info.value * 10 + *b - '0';
+        if (*b == '-') {
+            is_negative = true;
+            ++b;
+        }
+        for (; b != e; ++b) num = (num * 10 + *b - '0') & ((1u << 31u) - 1);
+        node.info.value = static_cast<int32_t>(is_negative ? -num : num);
     }
 };
 
