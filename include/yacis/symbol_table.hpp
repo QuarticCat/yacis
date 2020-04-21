@@ -8,7 +8,7 @@
 namespace yacis::analysis {
 
 template<typename Key, typename Value>
-class ChainMap: std::enable_shared_from_this<ChainMap<Key, Value>> {
+class ChainMap: public std::enable_shared_from_this<ChainMap<Key, Value>> {
   public:
     std::shared_ptr<ChainMap<Key, Value>> parent;
     std::map<Key, Value> map;
@@ -20,15 +20,25 @@ class ChainMap: std::enable_shared_from_this<ChainMap<Key, Value>> {
     ChainMap<Key, Value>& operator=(ChainMap<Key, Value>&&) noexcept = default;
 
     /**
+     * @brief Construct chain map with no parent and given map.
+     */
+    explicit ChainMap(std::map<Key, Value> map) noexcept:
+        parent(nullptr), map(std::move(map)){};
+
+    /**
      * @brief Construct chain map with given parent and empty map.
      */
-    explicit ChainMap(std::shared_ptr<ChainMap<Key, Value>> parent):
+    explicit ChainMap(std::shared_ptr<ChainMap<Key, Value>> parent) noexcept:
         parent(parent), map(){};
 
     /**
      * @brief Return a shared_ptr of this object.
      */
     std::shared_ptr<ChainMap<Key, Value>> get_ptr() {
+        return this->shared_from_this();
+    }
+
+    std::shared_ptr<const ChainMap<Key, Value>> get_ptr() const {
         return this->shared_from_this();
     }
 
@@ -42,20 +52,27 @@ class ChainMap: std::enable_shared_from_this<ChainMap<Key, Value>> {
     /**
      * @brief Return whether this object is on the top of its chain.
      */
-    bool is_top() {
+    [[nodiscard]] bool is_top() const {
         return parent == nullptr;
     }
 
     /**
      * @brief Return whether the chain contains given key.
      */
-    bool contains(const Key& key) {
+    [[nodiscard]] bool contains(const Key& key) const {
         if (is_top())
             return map.count(key) > 0;
         else if (map.count(key))
             return true;
         else
             return parent->contains(key);
+    }
+
+    /**
+     * @brief Return whether this map contains given key.
+     */
+    [[nodiscard]] bool i_contains(const Key& key) const {
+        return map.count(key) > 0;
     }
 
     /**
@@ -84,6 +101,6 @@ class ChainMap: std::enable_shared_from_this<ChainMap<Key, Value>> {
 template<typename Value>
 using SymbolTable = ChainMap<std::string, Value>;
 
-}  // namespace yacis::ast
+}  // namespace yacis::analysis
 
 #endif  // YACIS_SYMBOL_TABLE_HPP_

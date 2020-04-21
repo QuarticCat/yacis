@@ -1,6 +1,8 @@
 #ifndef YACIS_TYPE_HPP_
 #define YACIS_TYPE_HPP_
 
+#include <initializer_list>
+#include <memory>
 #include <stdexcept>
 #include <vector>
 
@@ -42,12 +44,18 @@ class Type {
     }
 
     /**
+     * @brief Construct function type from initializer_list. Throw
+     *        std::invalid_argument if the length is smaller than 2.
+     */
+    Type(std::initializer_list<Type> ele): Type(element_t(ele)) {}
+
+    /**
      * @brief Merge function type at the end. If this is not a function type, do
      *        nothing.
      */
-    void flatten() {
+    void flatten() noexcept {
         if (tag != TypeTag::kFunction) return;
-        for (;;) {
+        while (true) {
             auto back = ele.back();
             if (back.tag != TypeTag::kFunction) return;
             ele.pop_back();
@@ -58,19 +66,17 @@ class Type {
     }
 
     /**
-     * @brief Apply a param, return remain type. Throw std::invalid_argument if
-     *        not applicable. This function does not automatically flatten
-     *        operands.
+     * @brief Apply a param, make this be the remain type. Throw
+     *        std::invalid_argument if not applicable. This function does not
+     *        automatically flatten operands.
      */
-    [[nodiscard]] Type apply(const Type& param) const {
-        auto param_size = param.ele.size();
-        if (ele.size() <= param_size)
+    void apply(const Type& param) {
+        if (tag != TypeTag::kFunction || ele[0]!=param)
             throw std::invalid_argument("Not applicable.");
-        for (element_t::size_type i = 0; i < param_size; ++i) {
-            if (ele[i] != param.ele[i])
-                throw std::invalid_argument("Not applicable.");
-        }
-        return Type(element_t(ele.begin() + param_size, ele.end()));
+        if (ele.size() == 2)
+            *this = ele.back();
+        else
+            ele.erase(ele.begin());
     }
 
     /**
@@ -87,6 +93,10 @@ class Type {
         return !(lhs == rhs);
     }
 };
+
+inline const Type t_int(TypeTag::kInt);
+inline const Type t_bool(TypeTag::kBool);
+inline const Type t_char(TypeTag::kChar);
 
 }  // namespace yacis::analysis
 
