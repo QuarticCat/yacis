@@ -1,6 +1,7 @@
 #ifndef YACIS_NODE_HPP_
 #define YACIS_NODE_HPP_
 
+#include <any>
 #include <memory>
 #include <vector>
 
@@ -9,14 +10,6 @@
 #include "yacis/type.hpp"
 
 namespace yacis::ast {
-
-// Forward declaration
-class BaseNode;
-
-class BaseVisitor {
-  public:
-    virtual void visit(BaseNode&) = 0;
-};
 
 enum class NodeTag {
     kRoot,
@@ -35,12 +28,81 @@ enum class NodeTag {
     kLetExpr,
     kLambdaParam,
     kLambdaExpr,
-    kExpression,
 
     kTypeAlias,
     kTypeAssign,
     kValueAssign,
     kOutput
+};
+
+class BaseNode;
+
+template<NodeTag Tag, typename Info = void>
+class Node;
+
+struct IntLitInfo {
+    int32_t value;
+};
+
+struct BoolLitInfo {
+    bool value;
+};
+
+struct CharLitInfo {
+    char value;
+};
+
+struct VarNameInfo {
+    std::string name;
+};
+
+struct TypeNameInfo {
+    std::string name;
+};
+
+using IntLitNode = Node<NodeTag::kIntLit, IntLitInfo>;
+using BoolLitNode = Node<NodeTag::kBoolLit, BoolLitInfo>;
+using CharLitNode = Node<NodeTag::kCharLit, CharLitInfo>;
+
+using VarNameNode = Node<NodeTag::kVarName, VarNameInfo>;
+
+using TypeNameNode = Node<NodeTag::kTypeName, TypeNameInfo>;
+using TypeNode = Node<NodeTag::kType>;
+
+using ApplExprNode = Node<NodeTag::kApplExpr>;
+using CondExprNode = Node<NodeTag::kCondExpr>;
+using LetExprNode = Node<NodeTag::kLetExpr>;
+using LambdaParamNode = Node<NodeTag::kLambdaParam>;
+using LambdaExprNode = Node<NodeTag::kLambdaExpr>;
+
+using TypeAliasNode = Node<NodeTag::kTypeAlias>;
+using TypeAssignNode = Node<NodeTag::kTypeAssign>;
+using ValueAssignNode = Node<NodeTag::kValueAssign>;
+using OutputNode = Node<NodeTag::kOutput>;
+
+class BaseVisitor {
+  public:
+    virtual std::any visit(BaseNode&) = 0;
+
+    virtual std::any visit(IntLitNode&) = 0;
+    virtual std::any visit(BoolLitNode&) = 0;
+    virtual std::any visit(CharLitNode&) = 0;
+
+    virtual std::any visit(VarNameNode&) = 0;
+
+    virtual std::any visit(TypeNameNode&) = 0;
+    virtual std::any visit(TypeNode&) = 0;
+
+    virtual std::any visit(ApplExprNode&) = 0;
+    virtual std::any visit(CondExprNode&) = 0;
+    virtual std::any visit(LetExprNode&) = 0;
+    virtual std::any visit(LambdaParamNode&) = 0;
+    virtual std::any visit(LambdaExprNode&) = 0;
+
+    virtual std::any visit(TypeAliasNode&) = 0;
+    virtual std::any visit(TypeAssignNode&) = 0;
+    virtual std::any visit(ValueAssignNode&) = 0;
+    virtual std::any visit(OutputNode&) = 0;
 };
 
 class BaseNode {
@@ -50,10 +112,10 @@ class BaseNode {
     using iterator_t = tao::pegtl::internal::iterator;
 
     NodeTag tag = NodeTag::kRoot;
+    BaseNode* parent = nullptr;  // should be observer_ptr
     children_t children;
     iterator_t m_begin;
     iterator_t m_end;
-    SymbolTable<Type> type_table;
 
     BaseNode() = default;
     BaseNode(const BaseNode&) = delete;
@@ -83,23 +145,24 @@ class BaseNode {
 
     template<typename... States>
     void emplace_back(std::unique_ptr<BaseNode> child, States&&...) {
+        child->parent = this;
         children.emplace_back(std::move(child));
     }
 
-    virtual void accept(BaseVisitor* visitor) {
-        visitor->visit(*this);
+    virtual std::any accept(BaseVisitor* visitor) {
+        return visitor->visit(*this);
     }
 };
 
-template<NodeTag Tag, typename Info = void>
+template<NodeTag Tag, typename Info>
 class Node: public BaseNode {
   public:
     Info info;
 
     explicit Node(BaseNode&& base_node): BaseNode(std::move(base_node), Tag){};
 
-    void accept(BaseVisitor* visitor) override {
-        visitor->visit(*this);
+    std::any accept(BaseVisitor* visitor) override {
+        return visitor->visit(*this);
     }
 };
 
@@ -108,60 +171,10 @@ class Node<Tag, void>: public BaseNode {
   public:
     explicit Node(BaseNode&& base_node): BaseNode(std::move(base_node), Tag){};
 
-    void accept(BaseVisitor* visitor) override {
-        visitor->visit(*this);
+    std::any accept(BaseVisitor* visitor) override {
+        return visitor->visit(*this);
     }
 };
-
-struct IntLitInfo {
-    int32_t value;
-};
-
-struct BoolLitInfo {
-    bool value;
-};
-
-struct CharLitInfo {
-    char value;
-};
-
-struct VarNameInfo {
-    std::string name;
-};
-
-struct TypeNameInfo {
-    std::string name;
-    Type type;
-};
-
-struct TypeInfo {
-    Type type;
-};
-
-struct ExpressionInfo {
-    Type type;
-};
-
-using IntLitNode = Node<NodeTag::kIntLit, IntLitInfo>;
-using BoolLitNode = Node<NodeTag::kBoolLit, BoolLitInfo>;
-using CharLitNode = Node<NodeTag::kCharLit, CharLitInfo>;
-
-using VarNameNode = Node<NodeTag::kVarName, VarNameInfo>;
-
-using TypeNameNode = Node<NodeTag::kTypeName, TypeNameInfo>;
-using TypeNode = Node<NodeTag::kType, TypeInfo>;
-
-using ApplExprNode = Node<NodeTag::kApplExpr>;
-using CondExprNode = Node<NodeTag::kCondExpr>;
-using LetExprNode = Node<NodeTag::kLetExpr>;
-using LambdaParamNode = Node<NodeTag::kLambdaParam>;
-using LambdaExprNode = Node<NodeTag::kLambdaExpr>;
-using ExpressionNode = Node<NodeTag::kExpression, ExpressionInfo>;
-
-using TypeAliasNode = Node<NodeTag::kTypeAlias>;
-using TypeAssignNode = Node<NodeTag::kTypeAssign>;
-using ValueAssignNode = Node<NodeTag::kValueAssign>;
-using OutputNode = Node<NodeTag::kOutput>;
 
 }  // namespace yacis::ast
 

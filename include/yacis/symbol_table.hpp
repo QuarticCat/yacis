@@ -5,7 +5,7 @@
 #include <memory>
 #include <string>
 
-namespace yacis::ast {
+namespace yacis::analysis {
 
 template<typename Key, typename Value>
 class ChainMap: std::enable_shared_from_this<ChainMap<Key, Value>> {

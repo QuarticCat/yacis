@@ -3,7 +3,7 @@
 
 #include <vector>
 
-namespace yacis::ast {
+namespace yacis::analysis {
 
 enum class TypeTag { kInt, kBool, kChar, kFunction, kUndefined };
 

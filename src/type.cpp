@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-namespace yacis::ast {
+namespace yacis::analysis {
 
 Type::Type(TypeTag type_tag): tag(type_tag), ele() {
     if (type_tag == TypeTag::kFunction)
