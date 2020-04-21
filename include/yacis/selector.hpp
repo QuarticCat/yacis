@@ -23,17 +23,6 @@ void convert_node(std::unique_ptr<BaseNode>& n) {
 }
 
 /**
- * @brief Get node reference of casted n.
- * @tparam Node Target node type
- * @param n Node ptr to be casted
- * @return Node reference of casted n.
- */
-template<typename Node>
-Node& get_converted_node(std::unique_ptr<BaseNode>& n) {
-    return *static_cast<Node*>(n.get());
-}
-
-/**
  * @brief Replace n with its first child. This function does not check if it has
  *        no child.
  * @param n Node to be folded
@@ -50,7 +39,7 @@ struct Selector<grammar::IntLit>: std::true_type {
     template<typename... States>
     static void transform(std::unique_ptr<BaseNode>& n, States&&...) {
         convert_node<IntLitNode>(n);
-        auto& node = get_converted_node<IntLitNode>(n);
+        auto& node = get_node<IntLitNode>(n);
 
         node.info.value = 0;
         const char* b = node.m_begin.data;
@@ -64,7 +53,7 @@ struct Selector<grammar::BoolLit>: std::true_type {
     template<typename... States>
     static void transform(std::unique_ptr<BaseNode>& n, States&&...) {
         convert_node<BoolLitNode>(n);
-        auto& node = get_converted_node<BoolLitNode>(n);
+        auto& node = get_node<BoolLitNode>(n);
 
         node.info.value = *node.m_begin.data == 'T';
     }
@@ -75,7 +64,7 @@ struct Selector<grammar::CharLit>: std::true_type {
     template<typename... States>
     static void transform(std::unique_ptr<BaseNode>& n, States&&...) {
         convert_node<CharLitNode>(n);
-        auto& node = get_converted_node<CharLitNode>(n);
+        auto& node = get_node<CharLitNode>(n);
 
         const char* b = node.m_begin.data;
         if (*b != '\\')
@@ -124,7 +113,7 @@ struct Selector<grammar::VarName>: std::true_type {
     template<typename... States>
     static void transform(std::unique_ptr<BaseNode>& n, States&&...) {
         convert_node<VarNameNode>(n);
-        auto& node = get_converted_node<VarNameNode>(n);
+        auto& node = get_node<VarNameNode>(n);
 
         node.info.name = std::string(node.m_begin.data, node.m_end.data);
     }
@@ -135,7 +124,7 @@ struct Selector<grammar::TypeName>: std::true_type {
     template<typename... States>
     static void transform(std::unique_ptr<BaseNode>& n, States&&...) {
         convert_node<TypeNameNode>(n);
-        auto& node = get_converted_node<TypeNameNode>(n);
+        auto& node = get_node<TypeNameNode>(n);
 
         node.info.name = std::string(node.m_begin.data, node.m_end.data);
     }

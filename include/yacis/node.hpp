@@ -181,6 +181,17 @@ class Node<Tag, void>: public BaseNode {
     }
 };
 
+/**
+ * @brief Get node reference of casted n.
+ * @tparam Node Target node type
+ * @param n Node ptr to be casted
+ * @return Node reference of casted n.
+ */
+template<typename Node>
+Node& get_node(std::unique_ptr<BaseNode>& n) {
+    return *static_cast<Node*>(n.get());
+}
+
 }  // namespace yacis::ast
 
 #endif  // YACIS_NODE_HPP_
