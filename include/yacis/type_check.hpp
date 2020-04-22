@@ -193,7 +193,7 @@ class TypeCheckVisitor: public ast::BaseVisitor {
  *        error message and close the program.
  * @param root Root node of AST.
  */
-void type_check(std::unique_ptr<ast::BaseNode>& root) {
+void check_type(std::unique_ptr<ast::BaseNode>& root) {
     TypeCheckVisitor visitor;
     root->accept(&visitor);
 }
@@ -202,7 +202,7 @@ void type_check(std::unique_ptr<ast::BaseNode>& root) {
 
 // clang-format off
 using internal::TypeCheckVisitor;
-using internal::type_check;
+using internal::check_type;
 // clang-format on
 
 }  // namespace yacis::analysis
