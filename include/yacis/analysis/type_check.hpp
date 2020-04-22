@@ -6,10 +6,10 @@
 #include <stdexcept>
 #include <vector>
 
-#include "yacis/error.hpp"
-#include "yacis/node.hpp"
-#include "yacis/symbol_table.hpp"
-#include "yacis/type.hpp"
+#include "yacis/analysis/error.hpp"
+#include "yacis/analysis/symbol_table.hpp"
+#include "yacis/analysis/type.hpp"
+#include "yacis/ast/node.hpp"
 
 namespace yacis::analysis {
 

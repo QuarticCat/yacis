@@ -5,8 +5,8 @@
 #include <string>
 #include <type_traits>
 
-#include "yacis/grammar.hpp"
-#include "yacis/node.hpp"
+#include "yacis/ast/node.hpp"
+#include "yacis/grammar/grammar.hpp"
 
 namespace yacis::ast {
 

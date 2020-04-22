@@ -6,8 +6,6 @@
 #include <vector>
 
 #include "tao/pegtl.hpp"
-#include "yacis/symbol_table.hpp"
-#include "yacis/type.hpp"
 
 namespace yacis::ast {
 

@@ -6,7 +6,6 @@
 #include <string>
 
 #include "tao/pegtl.hpp"
-#include "yacis/node.hpp"
 
 namespace yacis::analysis {
 
