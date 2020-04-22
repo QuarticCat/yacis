@@ -15,7 +15,7 @@ namespace yacis::analysis {
 
 namespace internal {
 
-inline const std::map<std::string, Type> predefined_type{
+inline const std::map<std::string, Type> init_type{
     {"Int", t_int},    // int32_t
     {"Bool", t_bool},  // bool
     {"Char", t_char},  // char
@@ -37,12 +37,30 @@ inline const std::map<std::string, Type> predefined_type{
     {"not", {t_bool, t_bool}}           // !
 };
 
+inline const std::map<std::string, bool> init_defined{
+    {"negate", true},  // - (unary)
+    {"add", true},     // +
+    {"sub", true},     // - (binary)
+    {"mul", true},     // *
+    {"div", true},     // /
+    {"mod", true},     // %
+    {"eq", true},      // ==
+    {"neq", true},     // !=
+    {"lt", true},      // <
+    {"gt", true},      // >
+    {"leq", true},     // <=
+    {"geq", true},     // >=
+    {"and", true},     // &&
+    {"or", true},      // ||
+    {"not", true}      // !
+};
+
 class TypeCheckVisitor: public ast::BaseVisitor {
   public:
     std::shared_ptr<SymbolTable<Type>> type_table =
-        std::make_shared<SymbolTable<Type>>(predefined_type);
+        std::make_shared<SymbolTable<Type>>(init_type);
     std::shared_ptr<SymbolTable<bool>> defined_table =
-        std::make_shared<SymbolTable<bool>>();
+        std::make_shared<SymbolTable<bool>>(init_defined);
 
     std::any visit(ast::BaseNode& n) override {
         for (auto&& i : n.children) i->accept(this);
@@ -63,10 +81,12 @@ class TypeCheckVisitor: public ast::BaseVisitor {
 
     std::any visit(ast::VarNameNode& n) override {
         auto name = n.info.name;
-        if (type_table->contains(name))
-            return (*type_table)[name];
-        else
-            fatal_type_error(n.m_begin, "Variable name doesn't exist.");
+        if (!defined_table->contains(name))
+            fatal_define_error(n.m_begin, "Variable hasn't been defined.");
+        if (!type_table->contains(name))
+            fatal_define_error(n.m_begin,
+                               "Variable hasn't been assigned type.");
+        return (*type_table)[name];
     }
 
     std::any visit(ast::TypeNameNode& n) override {
@@ -131,6 +151,7 @@ class TypeCheckVisitor: public ast::BaseVisitor {
         auto name = ast::get_node<ast::TypeNameNode>(n.children[0]).info.name;
         auto type = std::any_cast<Type>(n.children[1]->accept(this));
         (*type_table)[name] = type;
+        (*defined_table)[name] = true;
         return type;
     }
 
@@ -153,7 +174,7 @@ class TypeCheckVisitor: public ast::BaseVisitor {
         auto name = ast::get_node<ast::TypeNameNode>(n.children[0]).info.name;
         if (type_table->i_contains(name))
             fatal_type_error(n.children[0]->m_begin,
-                             "Type name has already defined.");
+                             "Type name has already been defined.");
         auto type = std::any_cast<Type>(n.children[1]->accept(this));
         (*type_table)[name] = type;
         return std::any();
@@ -163,7 +184,7 @@ class TypeCheckVisitor: public ast::BaseVisitor {
         auto name = ast::get_node<ast::VarNameNode>(n.children[0]).info.name;
         if (type_table->i_contains(name))
             fatal_type_error(n.children[0]->m_begin,
-                             "Variable type has already defined.");
+                             "Variable has already been assigned type.");
         auto type = std::any_cast<Type>(n.children[1]->accept(this));
         (*type_table)[name] = type;
         return std::any();
@@ -172,14 +193,17 @@ class TypeCheckVisitor: public ast::BaseVisitor {
     std::any visit(ast::ValueAssignNode& n) override {
         auto name = ast::get_node<ast::VarNameNode>(n.children[0]).info.name;
         if (defined_table->i_contains(name))
-            fatal_type_error(n.children[0]->m_begin,
-                             "Variable value has already defined.");
-        auto type = std::any_cast<Type>(n.children[1]->accept(this));
-        if (type_table->i_contains(name) && (*type_table)[name] != type)
-            fatal_type_error(n.children[1]->m_begin,
-                             "Can not match the defined type.");
-        (*type_table)[name] = type;
+            fatal_define_error(n.children[0]->m_begin,
+                               "Variable has already been defined.");
         (*defined_table)[name] = true;
+        auto type = std::any_cast<Type>(n.children[1]->accept(this));
+        if (type_table->i_contains(name)) {
+            if ((*type_table)[name] != type)
+                fatal_type_error(n.children[1]->m_begin,
+                                 "Can not match the assigned type.");
+        } else {
+            (*type_table)[name] = type;
+        }
         return std::any();
     }
 

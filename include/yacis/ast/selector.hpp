@@ -140,7 +140,7 @@ template<>
 struct Selector<grammar::Type>: std::true_type {
     template<typename... States>
     static void transform(std::unique_ptr<BaseNode>& n, States&&...) {
-        if (n->children.size() == 1 && n->children[0]->tag == NodeTag::kType)
+        if (n->children.size() == 1)
             fold_node(n);
         else
             convert_node<TypeNode>(n);

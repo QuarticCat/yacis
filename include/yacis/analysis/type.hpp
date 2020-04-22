@@ -40,7 +40,7 @@ class Type {
     explicit Type(element_t ele): tag(TypeTag::kFunction), ele(std::move(ele)) {
         if (this->ele.size() < 2)
             throw std::invalid_argument(
-                "The length of comp should be greater than or equal to 2.");
+                "The length of ele should be greater than or equal to 2.");
     }
 
     /**
