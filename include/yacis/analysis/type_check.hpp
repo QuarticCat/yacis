@@ -183,7 +183,7 @@ class TypeCheckVisitor: public ast::BaseVisitor {
     }
 
     std::any visit(ast::OutputNode& n) override {
-        std::any_cast<Type>(n.children[0]->accept(this));
+        n.children[0]->accept(this);
         return std::any();
     }
 };
