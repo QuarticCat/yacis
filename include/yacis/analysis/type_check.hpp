@@ -26,7 +26,8 @@ inline const std::map<std::string, Type> predefined_type{
     {"mul", {t_int, t_int, t_int}},     // *
     {"div", {t_int, t_int, t_int}},     // /
     {"mod", {t_int, t_int, t_int}},     // %
-    {"eq", {t_int, t_int, t_bool}},     // =
+    {"eq", {t_int, t_int, t_bool}},     // ==
+    {"neq", {t_int, t_int, t_bool}},    // !=
     {"lt", {t_int, t_int, t_bool}},     // <
     {"gt", {t_int, t_int, t_bool}},     // >
     {"leq", {t_int, t_int, t_bool}},    // <=
