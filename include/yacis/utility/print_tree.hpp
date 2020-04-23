@@ -6,7 +6,7 @@ namespace yacis::utility {
 /**
  * @brief Convert given node tag to its name in c style string.
  */
-inline constexpr const char* tag_to_str(ast::NodeTag tag) {
+inline constexpr const char* tag_to_cstr(ast::NodeTag tag) {
     switch (tag) {
     case ast::NodeTag::kRoot:
         return "Root";
@@ -45,7 +45,7 @@ inline constexpr const char* tag_to_str(ast::NodeTag tag) {
 
 inline void print_tree(std::unique_ptr<ast::BaseNode>& root, int indent = 0) {
     for (int i = 0; i < indent; ++i) std::cout.put(' ');
-    std::cout << "- " << tag_to_str(root->tag) << std::endl;
+    std::cout << "- " << tag_to_cstr(root->tag) << std::endl;
     for (auto&& i : root->children) print_tree(i, indent + 2);
 }
 
