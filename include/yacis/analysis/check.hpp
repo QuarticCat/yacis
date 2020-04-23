@@ -55,15 +55,19 @@ inline const std::map<std::string, bool> init_defined{
     {"not", true}      // !
 };
 
-class TypeCheckVisitor: public ast::BaseVisitor {
+class CheckVisitor: public ast::BaseVisitor {
   public:
     std::shared_ptr<SymbolTable<Type>> type_table =
         std::make_shared<SymbolTable<Type>>(init_type);
     std::shared_ptr<SymbolTable<bool>> defined_table =
         std::make_shared<SymbolTable<bool>>(init_defined);
 
+    std::any call(std::unique_ptr<ast::BaseNode>& n) {
+        return n->accept(this);
+    }
+
     std::any visit(ast::BaseNode& n) override {
-        for (auto&& i : n.children) i->accept(this);
+        for (auto&& i : n.children) call(i);
         return std::any();
     }
 
@@ -101,7 +105,7 @@ class TypeCheckVisitor: public ast::BaseVisitor {
         std::vector<Type> type_vec;
         type_vec.reserve(n.children.size());
         for (auto&& i : n.children) {
-            type_vec.push_back(std::any_cast<Type>(i->accept(this)));
+            type_vec.push_back(std::any_cast<Type>(call(i)));
         }
         Type type(type_vec);
         type.flatten();
@@ -110,10 +114,10 @@ class TypeCheckVisitor: public ast::BaseVisitor {
 
     std::any visit(ast::ApplExprNode& n) override {
         auto it = n.children.begin();
-        Type func_type = std::any_cast<Type>((*it)->accept(this));
+        Type func_type = std::any_cast<Type>(call(*it));
         for (++it; it != n.children.end(); ++it) {
             try {
-                func_type.apply(std::any_cast<Type>((*it)->accept(this)));
+                func_type.apply(std::any_cast<Type>(call(*it)));
             } catch (const std::invalid_argument&) {
                 fatal_type_error((*it)->m_begin, "Not applicable");
             }
@@ -122,12 +126,12 @@ class TypeCheckVisitor: public ast::BaseVisitor {
     }
 
     std::any visit(ast::CondExprNode& n) override {
-        auto if_type = std::any_cast<Type>(n.children[0]->accept(this));
+        auto if_type = std::any_cast<Type>(call(n.children[0]));
         if (if_type.tag == TypeTag::kFunction)
             fatal_type_error(n.children[0]->m_begin,
                              "If-expression can not be function.");
-        auto then_type = std::any_cast<Type>(n.children[1]->accept(this));
-        auto else_type = std::any_cast<Type>(n.children[2]->accept(this));
+        auto then_type = std::any_cast<Type>(call(n.children[1]));
+        auto else_type = std::any_cast<Type>(call(n.children[2]));
         if (then_type != else_type)
             fatal_type_error(n.children[1]->m_begin,
                              "The type of then-expression should be the same as"
@@ -140,7 +144,7 @@ class TypeCheckVisitor: public ast::BaseVisitor {
 
         type_table = type_table->new_child();
         defined_table = defined_table->new_child();
-        for (auto&& i : n.children) ret = i->accept(this);
+        for (auto&& i : n.children) ret = call(i);
         type_table = type_table->parent;
         defined_table = defined_table->parent;
 
@@ -149,7 +153,7 @@ class TypeCheckVisitor: public ast::BaseVisitor {
 
     std::any visit(ast::LambdaParamNode& n) override {
         auto name = ast::get_node<ast::TypeNameNode>(n.children[0]).info.name;
-        auto type = std::any_cast<Type>(n.children[1]->accept(this));
+        auto type = std::any_cast<Type>(call(n.children[1]));
         (*type_table)[name] = type;
         (*defined_table)[name] = true;
         return type;
@@ -162,7 +166,7 @@ class TypeCheckVisitor: public ast::BaseVisitor {
         type_table = type_table->new_child();
         defined_table = defined_table->new_child();
         for (auto&& i : n.children) {
-            type_vec.push_back(std::any_cast<Type>(i->accept(this)));
+            type_vec.push_back(std::any_cast<Type>(call(i)));
         }
         type_table = type_table->parent;
         defined_table = defined_table->parent;
@@ -175,7 +179,7 @@ class TypeCheckVisitor: public ast::BaseVisitor {
         if (type_table->i_contains(name))
             fatal_type_error(n.children[0]->m_begin,
                              "Type name has already been defined.");
-        auto type = std::any_cast<Type>(n.children[1]->accept(this));
+        auto type = std::any_cast<Type>(call(n.children[1]));
         (*type_table)[name] = type;
         return std::any();
     }
@@ -185,7 +189,7 @@ class TypeCheckVisitor: public ast::BaseVisitor {
         if (type_table->i_contains(name))
             fatal_type_error(n.children[0]->m_begin,
                              "Variable has already been assigned type.");
-        auto type = std::any_cast<Type>(n.children[1]->accept(this));
+        auto type = std::any_cast<Type>(call(n.children[1]));
         (*type_table)[name] = type;
         return std::any();
     }
@@ -196,7 +200,7 @@ class TypeCheckVisitor: public ast::BaseVisitor {
             fatal_define_error(n.children[0]->m_begin,
                                "Variable has already been defined.");
         (*defined_table)[name] = true;
-        auto type = std::any_cast<Type>(n.children[1]->accept(this));
+        auto type = std::any_cast<Type>(call(n.children[1]));
         if (type_table->i_contains(name)) {
             if ((*type_table)[name] != type)
                 fatal_type_error(n.children[1]->m_begin,
@@ -208,26 +212,30 @@ class TypeCheckVisitor: public ast::BaseVisitor {
     }
 
     std::any visit(ast::OutputNode& n) override {
-        n.children[0]->accept(this);
+        auto type = std::any_cast<Type>(call(n.children[0]));
+        if (type.tag == TypeTag::kFunction)
+            fatal_type_error(n.children[0]->m_begin,
+                             "Output expression can not be function type.");
+        n.info.type = type;
         return std::any();
     }
 };
 
 /**
- * @brief Analysis stage 1. Check if all types are correct. Directly output
- *        error message and close the program.
+ * @brief Analysis stage 1. Check all kind of errors. Directly output error
+ *        message and close the program.
  * @param root Root node of AST.
  */
-void check_type(std::unique_ptr<ast::BaseNode>& root) {
-    TypeCheckVisitor visitor;
+void check(std::unique_ptr<ast::BaseNode>& root) {
+    CheckVisitor visitor;
     root->accept(&visitor);
 }
 
 }  // namespace internal
 
 // clang-format off
-using internal::TypeCheckVisitor;
-using internal::check_type;
+using internal::CheckVisitor;
+using internal::check;
 // clang-format on
 
 }  // namespace yacis::analysis

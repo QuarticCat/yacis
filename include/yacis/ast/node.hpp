@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "tao/pegtl.hpp"
+#include "yacis/analysis/type.hpp"
 
 namespace yacis::ast {
 
@@ -58,6 +59,10 @@ struct TypeNameInfo {
     std::string name;
 };
 
+struct OutputInfo {
+    analysis::Type type;
+};
+
 using IntLitNode = Node<NodeTag::kIntLit, IntLitInfo>;
 using BoolLitNode = Node<NodeTag::kBoolLit, BoolLitInfo>;
 using CharLitNode = Node<NodeTag::kCharLit, CharLitInfo>;
@@ -76,31 +81,73 @@ using LambdaExprNode = Node<NodeTag::kLambdaExpr>;
 using TypeAliasNode = Node<NodeTag::kTypeAlias>;
 using TypeAssignNode = Node<NodeTag::kTypeAssign>;
 using ValueAssignNode = Node<NodeTag::kValueAssign>;
-using OutputNode = Node<NodeTag::kOutput>;
+using OutputNode = Node<NodeTag::kOutput, OutputInfo>;
 
 class BaseVisitor {
   public:
-    virtual std::any visit(BaseNode&) = 0;
+    virtual std::any visit(BaseNode&) {
+        return std::any();
+    }
 
-    virtual std::any visit(IntLitNode&) = 0;
-    virtual std::any visit(BoolLitNode&) = 0;
-    virtual std::any visit(CharLitNode&) = 0;
+    virtual std::any visit(IntLitNode&) {
+        return std::any();
+    }
 
-    virtual std::any visit(VarNameNode&) = 0;
+    virtual std::any visit(BoolLitNode&) {
+        return std::any();
+    }
 
-    virtual std::any visit(TypeNameNode&) = 0;
-    virtual std::any visit(TypeNode&) = 0;
+    virtual std::any visit(CharLitNode&) {
+        return std::any();
+    }
 
-    virtual std::any visit(ApplExprNode&) = 0;
-    virtual std::any visit(CondExprNode&) = 0;
-    virtual std::any visit(LetExprNode&) = 0;
-    virtual std::any visit(LambdaParamNode&) = 0;
-    virtual std::any visit(LambdaExprNode&) = 0;
+    virtual std::any visit(VarNameNode&) {
+        return std::any();
+    }
 
-    virtual std::any visit(TypeAliasNode&) = 0;
-    virtual std::any visit(TypeAssignNode&) = 0;
-    virtual std::any visit(ValueAssignNode&) = 0;
-    virtual std::any visit(OutputNode&) = 0;
+    virtual std::any visit(TypeNameNode&) {
+        return std::any();
+    }
+
+    virtual std::any visit(TypeNode&) {
+        return std::any();
+    }
+
+    virtual std::any visit(ApplExprNode&) {
+        return std::any();
+    }
+
+    virtual std::any visit(CondExprNode&) {
+        return std::any();
+    }
+
+    virtual std::any visit(LetExprNode&) {
+        return std::any();
+    }
+
+    virtual std::any visit(LambdaParamNode&) {
+        return std::any();
+    }
+
+    virtual std::any visit(LambdaExprNode&) {
+        return std::any();
+    }
+
+    virtual std::any visit(TypeAliasNode&) {
+        return std::any();
+    }
+
+    virtual std::any visit(TypeAssignNode&) {
+        return std::any();
+    }
+
+    virtual std::any visit(ValueAssignNode&) {
+        return std::any();
+    }
+
+    virtual std::any visit(OutputNode&) {
+        return std::any();
+    }
 };
 
 class BaseNode {
