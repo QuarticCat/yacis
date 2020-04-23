@@ -5,10 +5,12 @@
 #include <string>
 #include <type_traits>
 
-#include "yacis/grammar.hpp"
-#include "yacis/node.hpp"
+#include "yacis/ast/node.hpp"
+#include "yacis/grammar/grammar.hpp"
 
 namespace yacis::ast {
+
+namespace internal {
 
 /**
  * @brief Convert n to designated type.
@@ -18,17 +20,6 @@ namespace yacis::ast {
 template<typename Node>
 void convert_node(std::unique_ptr<BaseNode>& n) {
     n = std::make_unique<Node>(std::move(*n.release()));
-}
-
-/**
- * @brief Get node reference of casted n.
- * @tparam Node Target node type
- * @param n Node ptr to be casted
- * @return Node reference of casted n.
- */
-template<typename Node>
-Node& get_converted_node(std::unique_ptr<BaseNode>& n) {
-    return *static_cast<Node*>(n.get());
 }
 
 /**
@@ -48,12 +39,18 @@ struct Selector<grammar::IntLit>: std::true_type {
     template<typename... States>
     static void transform(std::unique_ptr<BaseNode>& n, States&&...) {
         convert_node<IntLitNode>(n);
-        auto& node = get_converted_node<IntLitNode>(n);
+        auto& node = get_node<IntLitNode>(n);
 
-        node.info.value = 0;
+        uint64_t num = 0;
+        bool is_negative = false;
         const char* b = node.m_begin.data;
         const char* e = node.m_end.data;
-        for (; b != e; ++b) node.info.value = node.info.value * 10 + *b - '0';
+        if (*b == '-') {
+            is_negative = true;
+            ++b;
+        }
+        for (; b != e; ++b) num = (num * 10 + *b - '0') & ((1u << 31u) - 1);
+        node.info.value = static_cast<int32_t>(is_negative ? -num : num);
     }
 };
 
@@ -62,7 +59,7 @@ struct Selector<grammar::BoolLit>: std::true_type {
     template<typename... States>
     static void transform(std::unique_ptr<BaseNode>& n, States&&...) {
         convert_node<BoolLitNode>(n);
-        auto& node = get_converted_node<BoolLitNode>(n);
+        auto& node = get_node<BoolLitNode>(n);
 
         node.info.value = *node.m_begin.data == 'T';
     }
@@ -73,7 +70,7 @@ struct Selector<grammar::CharLit>: std::true_type {
     template<typename... States>
     static void transform(std::unique_ptr<BaseNode>& n, States&&...) {
         convert_node<CharLitNode>(n);
-        auto& node = get_converted_node<CharLitNode>(n);
+        auto& node = get_node<CharLitNode>(n);
 
         const char* b = node.m_begin.data;
         if (*b != '\\')
@@ -122,7 +119,7 @@ struct Selector<grammar::VarName>: std::true_type {
     template<typename... States>
     static void transform(std::unique_ptr<BaseNode>& n, States&&...) {
         convert_node<VarNameNode>(n);
-        auto& node = get_converted_node<VarNameNode>(n);
+        auto& node = get_node<VarNameNode>(n);
 
         node.info.name = std::string(node.m_begin.data, node.m_end.data);
     }
@@ -133,7 +130,7 @@ struct Selector<grammar::TypeName>: std::true_type {
     template<typename... States>
     static void transform(std::unique_ptr<BaseNode>& n, States&&...) {
         convert_node<TypeNameNode>(n);
-        auto& node = get_converted_node<TypeNameNode>(n);
+        auto& node = get_node<TypeNameNode>(n);
 
         node.info.name = std::string(node.m_begin.data, node.m_end.data);
     }
@@ -143,7 +140,7 @@ template<>
 struct Selector<grammar::Type>: std::true_type {
     template<typename... States>
     static void transform(std::unique_ptr<BaseNode>& n, States&&...) {
-        if (n->children.size() == 1 && n->children[0]->tag == NodeTag::kType)
+        if (n->children.size() == 1)
             fold_node(n);
         else
             convert_node<TypeNode>(n);
@@ -197,10 +194,7 @@ template<>
 struct Selector<grammar::Expression>: std::true_type {
     template<typename... States>
     static void transform(std::unique_ptr<BaseNode>& n, States&&...) {
-        if (n->children[0]->tag == NodeTag::kExpression)
-            fold_node(n);
-        else
-            convert_node<ExpressionNode>(n);
+        fold_node(n);
     }
 };
 
@@ -235,6 +229,10 @@ struct Selector<grammar::Output>: std::true_type {
         convert_node<OutputNode>(n);
     }
 };
+
+}  // namespace internal
+
+using internal::Selector;
 
 }  // namespace yacis::ast
 
