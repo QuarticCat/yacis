@@ -1,5 +1,5 @@
-#ifndef YACIS_GRAMMAR_HPP_
-#define YACIS_GRAMMAR_HPP_
+#ifndef YACIS_GRAMMAR_GRAMMAR_HPP_
+#define YACIS_GRAMMAR_GRAMMAR_HPP_
 
 #include "tao/pegtl.hpp"
 
@@ -347,4 +347,4 @@ using internal::Grammar;
 
 }  // namespace yacis::grammar
 
-#endif  // YACIS_GRAMMAR_HPP_
+#endif  // YACIS_GRAMMAR_GRAMMAR_HPP_

@@ -1,5 +1,5 @@
-#ifndef YACIS_NODE_HPP_
-#define YACIS_NODE_HPP_
+#ifndef YACIS_AST_NODE_HPP_
+#define YACIS_AST_NODE_HPP_
 
 #include <any>
 #include <memory>
@@ -239,4 +239,4 @@ Node& get_node(std::unique_ptr<BaseNode>& n) {
 
 }  // namespace yacis::ast
 
-#endif  // YACIS_NODE_HPP_
+#endif  // YACIS_AST_NODE_HPP_

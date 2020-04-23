@@ -1,5 +1,5 @@
-#ifndef YACIS_PRINT_TREE_HPP_
-#define YACIS_PRINT_TREE_HPP_
+#ifndef YACIS_UTILITY_PRINT_TREE_HPP_
+#define YACIS_UTILITY_PRINT_TREE_HPP_
 
 namespace yacis::utility {
 
@@ -51,4 +51,4 @@ inline void print_tree(std::unique_ptr<ast::BaseNode>& root, int indent = 0) {
 
 }  // namespace yacis::utility
 
-#endif  // YACIS_PRINT_TREE_HPP_
+#endif  // YACIS_UTILITY_PRINT_TREE_HPP_

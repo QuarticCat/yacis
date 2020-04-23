@@ -1,5 +1,5 @@
-#ifndef YACIS_ERROR_HPP_
-#define YACIS_ERROR_HPP_
+#ifndef YACIS_ANALYSIS_ERROR_HPP_
+#define YACIS_ANALYSIS_ERROR_HPP_
 
 #include <cstdlib>
 #include <iostream>
@@ -45,4 +45,4 @@ inline constexpr const char* error_type_to_cstr(ErrorType error_type) {
 
 }  // namespace yacis::analysis
 
-#endif  // YACIS_ERROR_HPP_
+#endif  // YACIS_ANALYSIS_ERROR_HPP_

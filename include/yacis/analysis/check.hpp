@@ -1,5 +1,5 @@
-#ifndef YACIS_TYPE_CHECK_HPP_
-#define YACIS_TYPE_CHECK_HPP_
+#ifndef YACIS_ANALYSIS_TYPE_CHECK_HPP_
+#define YACIS_ANALYSIS_TYPE_CHECK_HPP_
 
 #include <any>
 #include <memory>
@@ -240,4 +240,4 @@ using internal::check;
 
 }  // namespace yacis::analysis
 
-#endif  // YACIS_TYPE_CHECK_HPP_
+#endif  // YACIS_ANALYSIS_TYPE_CHECK_HPP_

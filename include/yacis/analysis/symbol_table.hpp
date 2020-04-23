@@ -1,5 +1,5 @@
-#ifndef YACIS_SYMBOL_TABLE_HPP_
-#define YACIS_SYMBOL_TABLE_HPP_
+#ifndef YACIS_ANALYSIS_SYMBOL_TABLE_HPP_
+#define YACIS_ANALYSIS_SYMBOL_TABLE_HPP_
 
 #include <map>
 #include <memory>
@@ -103,4 +103,4 @@ using SymbolTable = ChainMap<std::string, Value>;
 
 }  // namespace yacis::analysis
 
-#endif  // YACIS_SYMBOL_TABLE_HPP_
+#endif  // YACIS_ANALYSIS_SYMBOL_TABLE_HPP_

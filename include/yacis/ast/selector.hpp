@@ -1,5 +1,5 @@
-#ifndef YACIS_SELECTOR_HPP_
-#define YACIS_SELECTOR_HPP_
+#ifndef YACIS_AST_SELECTOR_HPP_
+#define YACIS_AST_SELECTOR_HPP_
 
 #include <memory>
 #include <string>
@@ -236,4 +236,4 @@ using internal::Selector;
 
 }  // namespace yacis::ast
 
-#endif  // YACIS_SELECTOR_HPP_
+#endif  // YACIS_AST_SELECTOR_HPP_

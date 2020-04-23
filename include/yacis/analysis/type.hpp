@@ -1,5 +1,5 @@
-#ifndef YACIS_TYPE_HPP_
-#define YACIS_TYPE_HPP_
+#ifndef YACIS_ANALYSIS_TYPE_HPP_
+#define YACIS_ANALYSIS_TYPE_HPP_
 
 #include <initializer_list>
 #include <memory>
@@ -100,4 +100,4 @@ inline const Type t_char(TypeTag::kChar);
 
 }  // namespace yacis::analysis
 
-#endif  // YACIS_TYPE_HPP_
+#endif  // YACIS_ANALYSIS_TYPE_HPP_
