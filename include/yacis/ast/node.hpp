@@ -83,73 +83,6 @@ using TypeAssignNode = Node<NodeTag::kTypeAssign>;
 using ValueAssignNode = Node<NodeTag::kValueAssign>;
 using OutputNode = Node<NodeTag::kOutput, OutputInfo>;
 
-class BaseVisitor {
-  public:
-    virtual std::any visit(BaseNode&) {
-        return std::any();
-    }
-
-    virtual std::any visit(IntLitNode&) {
-        return std::any();
-    }
-
-    virtual std::any visit(BoolLitNode&) {
-        return std::any();
-    }
-
-    virtual std::any visit(CharLitNode&) {
-        return std::any();
-    }
-
-    virtual std::any visit(VarNameNode&) {
-        return std::any();
-    }
-
-    virtual std::any visit(TypeNameNode&) {
-        return std::any();
-    }
-
-    virtual std::any visit(TypeNode&) {
-        return std::any();
-    }
-
-    virtual std::any visit(ApplExprNode&) {
-        return std::any();
-    }
-
-    virtual std::any visit(CondExprNode&) {
-        return std::any();
-    }
-
-    virtual std::any visit(LetExprNode&) {
-        return std::any();
-    }
-
-    virtual std::any visit(LambdaParamNode&) {
-        return std::any();
-    }
-
-    virtual std::any visit(LambdaExprNode&) {
-        return std::any();
-    }
-
-    virtual std::any visit(TypeAliasNode&) {
-        return std::any();
-    }
-
-    virtual std::any visit(TypeAssignNode&) {
-        return std::any();
-    }
-
-    virtual std::any visit(ValueAssignNode&) {
-        return std::any();
-    }
-
-    virtual std::any visit(OutputNode&) {
-        return std::any();
-    }
-};
-
 class BaseNode {
     // Modified from tao::pegtl::parse_tree::basic_node
   public:
@@ -198,10 +131,6 @@ class BaseNode {
         child->parent = this;
         children.emplace_back(std::move(child));
     }
-
-    virtual std::any accept(BaseVisitor* visitor) {
-        return visitor->visit(*this);
-    }
 };
 
 template<NodeTag Tag, typename Info>
@@ -210,20 +139,12 @@ class Node: public BaseNode {
     Info info;
 
     explicit Node(BaseNode&& base_node): BaseNode(std::move(base_node), Tag){};
-
-    std::any accept(BaseVisitor* visitor) override {
-        return visitor->visit(*this);
-    }
 };
 
 template<NodeTag Tag>
 class Node<Tag, void>: public BaseNode {
   public:
     explicit Node(BaseNode&& base_node): BaseNode(std::move(base_node), Tag){};
-
-    std::any accept(BaseVisitor* visitor) override {
-        return visitor->visit(*this);
-    }
 };
 
 /**
