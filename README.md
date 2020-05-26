@@ -8,14 +8,14 @@ YACIS is short for "Yet Another Cpp Implementation for STLC (Simply Typed Lambda
 
 ### Requirements
 
-- CMake 12 or higher
+- CMake 3.12 or higher
 - One of:
   - Clang 5 or higher
   - GCC 7 or higher
   - MSVC 2017 or higher
-- C++ 17 or higher (set `-std=c++17` please)
+- C++ 17 (set `-std=c++17` please)
 
-### Build as Executable
+### Build as An Executable
 
 ```
 $ cd yacis
@@ -49,12 +49,12 @@ $ ./yacis <path-to-input-file> <path-to-output-file>
 
 This will write the result to file.
 
-### Build as Library
+### Build as A Library
 
-In `CMakeLists.txt`:
+In your `CMakeLists.txt`:
 
 ```
-add_subdirectory(path_to/yacis)
+add_subdirectory(path-to/yacis)
 target_link_libraries(your-target yacis)
 ```
 
@@ -68,7 +68,7 @@ For details of APIs, please see `yacis/include/yacis/yacis.hpp`.
 
 ## YACIS Language
 
-### Comment
+### Comments
 
 Comments are start with `--`. For example:
 
@@ -76,7 +76,7 @@ Comments are start with `--`. For example:
 -- This is a comment.
 ```
 
-### Variable
+### Variables
 
 All variables should start with a lower case letter or `_`.
 
@@ -107,7 +107,7 @@ func = \n:Int -> if eq n 0 then 1 else n
 
 But this is not necessary. If the type is assigned, the compiler will check that. If not, the compiler will infer the type. Only recursive functions need to be assigned a type before being assigned a value.
 
-### Type
+### Types
 
 There are three basic types:
 
@@ -156,7 +156,7 @@ data Balabala = Int -> Char -> Bool -> Bool
 
 All type names should start with a upper case letter.
 
-### Application Expression
+### Application Expressions
 
 Application expressions is very simple:
 
@@ -178,7 +178,7 @@ You can use brackets to control the evaluation order:
 neq (add 2 (mod 5 2)) 4  -- the final value is True
 ```
 
-### Conditional Expression
+### Conditional Expressions
 
 Conditional expressions, or if-expressions, in YACIS are like:
 
@@ -204,7 +204,7 @@ if neq n 0
     else \x:Int -> 2
 ```
 
-### Lambda Expression
+### Lambda Expressions
 
 Lambda expressions are like:
 
@@ -230,7 +230,7 @@ Lambda expressions are right-combined. So these expressions are equal:
 \a:Int b:Char c:Bool -> 0
 ```
 
-### Input and Output
+### Inputs and Outputs
 
 To keep purely functional, YACIS doesn't have any input method. And the outputs are more like "inspect", it can not be combined in expressions.
 
@@ -244,7 +244,7 @@ b  -- Output "'"
 neq a 0  -- Output "True"
 ```
 
-### Built-In Function
+### Built-In Functions
 
 (Just to illustrate the effect. YACIS doesn't support these operators)
 
@@ -295,6 +295,6 @@ not : Bool -> Bool
 not = \a:Bool -> !a
 ```
 
-### Example
+### Examples
 
 See `yacis/examples/` for examples.
