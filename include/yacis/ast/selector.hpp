@@ -39,7 +39,7 @@ struct Selector<grammar::IntLit>: std::true_type {
     template<typename... States>
     static void transform(std::unique_ptr<BaseNode>& n, States&&...) {
         convert_node<IntLitNode>(n);
-        auto& node = get_node<IntLitNode>(n);
+        auto& node = as<IntLitNode>(n);
 
         uint64_t num = 0;
         bool is_negative = false;
@@ -59,7 +59,7 @@ struct Selector<grammar::BoolLit>: std::true_type {
     template<typename... States>
     static void transform(std::unique_ptr<BaseNode>& n, States&&...) {
         convert_node<BoolLitNode>(n);
-        auto& node = get_node<BoolLitNode>(n);
+        auto& node = as<BoolLitNode>(n);
 
         node.info.value = *node.m_begin.data == 'T';
     }
@@ -70,7 +70,7 @@ struct Selector<grammar::CharLit>: std::true_type {
     template<typename... States>
     static void transform(std::unique_ptr<BaseNode>& n, States&&...) {
         convert_node<CharLitNode>(n);
-        auto& node = get_node<CharLitNode>(n);
+        auto& node = as<CharLitNode>(n);
 
         const char* b = node.m_begin.data;
         if (*b != '\\')
@@ -119,7 +119,7 @@ struct Selector<grammar::VarName>: std::true_type {
     template<typename... States>
     static void transform(std::unique_ptr<BaseNode>& n, States&&...) {
         convert_node<VarNameNode>(n);
-        auto& node = get_node<VarNameNode>(n);
+        auto& node = as<VarNameNode>(n);
 
         node.info.name = std::string(node.m_begin.data, node.m_end.data);
     }
@@ -130,7 +130,7 @@ struct Selector<grammar::TypeName>: std::true_type {
     template<typename... States>
     static void transform(std::unique_ptr<BaseNode>& n, States&&...) {
         convert_node<TypeNameNode>(n);
-        auto& node = get_node<TypeNameNode>(n);
+        auto& node = as<TypeNameNode>(n);
 
         node.info.name = std::string(node.m_begin.data, node.m_end.data);
     }

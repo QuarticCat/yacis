@@ -40,6 +40,12 @@ inline constexpr const char* tag_to_cstr(ast::NodeTag tag) {
         return "ValueAssign";
     case ast::NodeTag::kOutput:
         return "Output";
+    case ast::NodeTag::kVal:
+        return "Val";
+    case ast::NodeTag::kArg:
+        return "Arg";
+    case ast::NodeTag::kGlobal:
+        return "Global";
     }
 }
 

@@ -4,6 +4,7 @@
 
 #include "tao/pegtl/contrib/parse_tree.hpp"
 #include "yacis/analysis/check.hpp"
+#include "yacis/analysis/replace.hpp"
 #include "yacis/ast/node.hpp"
 #include "yacis/ast/selector.hpp"
 #include "yacis/utility/print_tree.hpp"
@@ -16,4 +17,6 @@ int main() {
                                               yacis::ast::Selector>(in);
     yacis::utility::print_tree(root);
     yacis::analysis::check(root);
+    yacis::analysis::replace(root);
+    yacis::utility::print_tree(root);
 }
