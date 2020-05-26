@@ -15,6 +15,7 @@
 #include "yacis/ast/selector.hpp"
 #include "yacis/grammar/grammar.hpp"
 #include "yacis/utility/print_tree.hpp"
+#include "yacis/utility/tokenizer.hpp"
 
 namespace yacis {
 
