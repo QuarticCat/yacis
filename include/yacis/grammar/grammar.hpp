@@ -243,14 +243,15 @@ struct CondExpr:
 /**
  * @brief Let-in expression.
  */
-struct LetExpr:
-    seq<string<'l', 'e', 't'>,
-        CSep,
-        list<sor<TypeAssign, ValueAssign>, CSep0>,
-        CSep,
-        string<'i', 'n'>,
-        CSep,
-        Expression> {};
+struct LetExpr: failure {};
+// struct LetExpr:
+//     seq<string<'l', 'e', 't'>,
+//         CSep,
+//         list<sor<TypeAssign, ValueAssign>, CSep0>,
+//         CSep,
+//         string<'i', 'n'>,
+//         CSep,
+//         Expression> {};
 
 /**
  * @brief Lambda parameter.
