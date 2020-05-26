@@ -22,6 +22,8 @@ inline constexpr const char* error_type_to_cstr(ErrorType error_type) {
         return "TypeError";
     case ErrorType::kDefineError:
         return "DefineError";
+    default:
+        return "UnknownError";
     }
 }
 

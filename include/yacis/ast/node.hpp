@@ -214,7 +214,7 @@ class BaseNode {
     }
 
     template<typename Rule, typename Input, typename... States>
-    void failure(const Input&, States&&...) noexcept {};
+    void failure(const Input&, States&&...) noexcept {}
 
     template<typename... States>
     void emplace_back(std::unique_ptr<BaseNode> child, States&&...) {
