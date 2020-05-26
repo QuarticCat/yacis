@@ -3,6 +3,7 @@
 
 #include <any>
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "yacis/analysis/type.hpp"
@@ -167,6 +168,7 @@ inline const std::vector<ObjRc> init_global_vec{
 class EvalVisitor: public ast::BaseVisitor {
   public:
     std::vector<ObjRc> global_vec = init_global_vec;
+    std::vector<std::pair<int32_t, Type>> output;
 
     std::any call(std::unique_ptr<ast::BaseNode>& p) {
         return p->accept(this);
@@ -222,16 +224,9 @@ class EvalVisitor: public ast::BaseVisitor {
     }
 
     std::any visit(ast::OutputNode& n) override {
-        auto result =
-            YacVal::from(std::any_cast<const ObjRc>(call(n.children[0]))
-                             ->eval(empty_context))
-                .val;
-        if (n.info.type == t_int)
-            std::cout << "Int: " << result << '\n';
-        else if (n.info.type == t_char)
-            std::cout << "Char: " << static_cast<char>(result) << '\n';
-        else
-            std::cout << "Bool: " << static_cast<bool>(result) << '\n';
+        auto result = std::any_cast<const ObjRc>(call(n.children[0]));
+        output.emplace_back(YacVal::from(result->eval(empty_context)).val,
+                            n.info.type);
         return std::any();
     }
 };
@@ -240,8 +235,11 @@ class EvalVisitor: public ast::BaseVisitor {
  * @brief Analysis stage 3. Evaluate ast and output results.
  * @param root Root node of AST.
  */
-inline void eval(std::unique_ptr<ast::BaseNode>& root) {
-    EvalVisitor().call(root);
+inline std::vector<std::pair<int32_t, Type>>
+eval(std::unique_ptr<ast::BaseNode>& root) {
+    EvalVisitor visitor;
+    visitor.call(root);
+    return std::move(visitor.output);
 }
 
 }  // namespace internal
