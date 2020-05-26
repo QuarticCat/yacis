@@ -94,6 +94,8 @@ class GlobalNode;
 
 class BaseVisitor {
   public:
+    virtual ~BaseVisitor() = default;
+
     virtual std::any visit(BaseNode&) {
         return std::any();
     }
@@ -158,15 +160,15 @@ class BaseVisitor {
         return std::any();
     }
 
-    virtual std::any visit(ValNode&){
+    virtual std::any visit(ValNode&) {
         return std::any();
     }
 
-    virtual std::any visit(ArgNode&){
+    virtual std::any visit(ArgNode&) {
         return std::any();
     }
 
-    virtual std::any visit(GlobalNode&){
+    virtual std::any visit(GlobalNode&) {
         return std::any();
     }
 };

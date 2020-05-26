@@ -15,7 +15,7 @@ namespace yacis::analysis {
 
 namespace internal {
 
-inline const std::map<std::string, Type> init_type{
+inline const std::map<std::string, Type> init_type_table{
     {"Int", t_int},    // int32_t
     {"Bool", t_bool},  // bool
     {"Char", t_char},  // char
@@ -37,7 +37,7 @@ inline const std::map<std::string, Type> init_type{
     {"not", {t_bool, t_bool}}           // !
 };
 
-inline const std::map<std::string, bool> init_defined{
+inline const std::map<std::string, bool> init_defined_table{
     {"negate", true},  // - (unary)
     {"add", true},     // +
     {"sub", true},     // - (binary)
@@ -58,9 +58,9 @@ inline const std::map<std::string, bool> init_defined{
 class CheckVisitor: public ast::BaseVisitor {
   public:
     std::shared_ptr<SymbolTable<Type>> type_table =
-        std::make_shared<SymbolTable<Type>>(init_type);
+        std::make_shared<SymbolTable<Type>>(init_type_table);
     std::shared_ptr<SymbolTable<bool>> defined_table =
-        std::make_shared<SymbolTable<bool>>(init_defined);
+        std::make_shared<SymbolTable<bool>>(init_defined_table);
 
     std::any call(std::unique_ptr<ast::BaseNode>& n) {
         return n->accept(this);
@@ -226,7 +226,7 @@ class CheckVisitor: public ast::BaseVisitor {
  *        message and close the program.
  * @param root Root node of AST.
  */
-void check(std::unique_ptr<ast::BaseNode>& root) {
+inline void check(std::unique_ptr<ast::BaseNode>& root) {
     CheckVisitor().call(root);
 }
 

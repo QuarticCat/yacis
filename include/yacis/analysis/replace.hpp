@@ -11,22 +11,40 @@ namespace yacis::analysis {
 
 namespace internal {
 
+inline const std::map<std::string, size_t> init_global_table{
+    {"negate", 0},  // - (unary)
+    {"add", 1},     // +
+    {"sub", 2},     // - (binary)
+    {"mul", 3},     // *
+    {"div", 4},     // /
+    {"mod", 5},     // %
+    {"eq", 6},      // ==
+    {"neq", 7},     // !=
+    {"lt", 8},      // <
+    {"gt", 9},      // >
+    {"leq", 10},    // <=
+    {"geq", 11},    // >=
+    {"and", 12},    // &&
+    {"or", 13},     // ||
+    {"not", 14}     // !
+};
+
 class ReplaceVisitor: public ast::BaseVisitor {
   public:
     std::shared_ptr<SymbolTable<int32_t>> val_table =
         std::make_shared<SymbolTable<int32_t>>();
     std::shared_ptr<SymbolTable<size_t>> global_table =
-        std::make_shared<SymbolTable<size_t>>();
+        std::make_shared<SymbolTable<size_t>>(init_global_table);
     std::shared_ptr<SymbolTable<size_t>> arg_table =
         std::make_shared<SymbolTable<size_t>>();
     std::unique_ptr<ast::BaseNode>* curr_node = nullptr;
-    size_t global_count = 0;
+    size_t global_count = init_global_table.size();
     size_t arg_count = 0;
 
-    void call(std::unique_ptr<ast::BaseNode>& n) {
+    void call(std::unique_ptr<ast::BaseNode>& p) {
         auto temp = curr_node;
-        curr_node = &n;
-        n->accept(this);
+        curr_node = &p;
+        p->accept(this);
         curr_node = temp;
     }
 
@@ -90,12 +108,13 @@ class ReplaceVisitor: public ast::BaseVisitor {
     }
 
     std::any visit(ast::ValueAssignNode& n) override {
-        call(n.children[1]);
         auto& name = ast::as<ast::VarNameNode>(n.children[0]).info.name;
+        (*global_table)[name] = global_count++;
+
+        call(n.children[1]);
         if (n.children[1]->tag == ast::NodeTag::kVal)
             (*val_table)[name] = ast::as<ast::ValNode>(n.children[1]).value;
-        else
-            (*global_table)[name] = global_count++;
+
         return std::any();
     }
 
