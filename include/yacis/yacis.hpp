@@ -33,8 +33,8 @@ inline std::string compile_to_asm(std::string path) {
         if (i.second == analysis::t_int) {
             uint32_t val = i.first; // convert to unsigned for bit operations
             ret += "\n\taddi $v0, $zero, 1"
-                   "\n\tlui $a0, " + std::to_string((val & 0xffff0000) >> 16u) +
-                   "\n\taddi $a0, $a0, " + std::to_string(val & 0xffff0000) +
+                   "\n\tlui $a0, " + std::to_string(val & 0xffff0000u >> 16u) +
+                   "\n\taddi $a0, $a0, " + std::to_string(val & 0x0000ffffu) +
                    "\n\tsyscall";
         } else if (i.second == analysis::t_char) {
             char val = i.first;

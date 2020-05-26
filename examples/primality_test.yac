@@ -1,1 +1,15 @@
--- TODO
+isPrimeHelper : Int -> Int -> Bool
+isPrimeHelper = \n:Int d:Int ->
+    if eq d 1
+        then True
+        else and (neq (mod n d) 0) (isPrimeHelper n (sub d 1))
+
+isPrime = \n:Int -> isPrimeHelper n (sub n 1)
+
+isPrime 2
+'\n'
+isPrime 3
+'\n'
+isPrime 4
+'\n'
+isPrime 5

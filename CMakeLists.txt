@@ -10,9 +10,10 @@ endif ()
 
 add_subdirectory(third_party/pegtl)
 
-file(GLOB_RECURSE yacis_sources src/*.cpp include/*.hpp)
+file(GLOB_RECURSE yacis_headers include/*.hpp)
+set(yacis_main src/main.cpp)
 
-add_executable(yacis ${yacis_sources})
+add_executable(yacis ${yacis_headers} ${yacis_main})
 target_include_directories(yacis PRIVATE include)
 target_link_libraries(yacis PRIVATE taocpp::pegtl)
 target_compile_features(yacis PRIVATE cxx_std_17)
