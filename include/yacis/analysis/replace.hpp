@@ -2,7 +2,6 @@
 #define YACIS_ANALYSIS_REPLACE_HPP_
 
 #include <any>
-#include <iostream>
 #include <memory>
 
 #include "yacis/analysis/symbol_table.hpp"
@@ -54,7 +53,8 @@ class ReplaceVisitor: public ast::BaseVisitor {
     std::any visit(ast::VarNameNode& n) override {
         auto& name = n.info.name;
         if (arg_table->contains(name))
-            *curr_node = std::make_unique<ast::ArgNode>((*arg_table)[name]);
+            *curr_node = std::make_unique<ast::ArgNode>(arg_count - 1 -
+                                                        (*arg_table)[name]);
         else if (val_table->contains(name))
             *curr_node = std::make_unique<ast::ValNode>((*val_table)[name]);
         else
