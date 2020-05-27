@@ -33,37 +33,37 @@ inline std::string compile_to_asm(std::string path) {
     for (const auto& i : output) {
         if (i.second == analysis::t_int) {
             uint32_t val = i.first; // convert to unsigned for bit operations
-            ret += "\n\taddi $v0, $zero, 1"
+            ret += "\n\taddiu $v0, $zero, 1"
                    "\n\tlui $a0, " + std::to_string(val & 0xffff0000u >> 16u) +
-                   "\n\taddi $a0, $a0, " + std::to_string(val & 0x0000ffffu) +
+                   "\n\taddiu $a0, $a0, " + std::to_string(val & 0x0000ffffu) +
                    "\n\tsyscall";
         } else if (i.second == analysis::t_char) {
             char val = i.first;
-            ret += "\n\taddi $v0, $zero, 11"
-                   "\n\taddi $a0, $zero, " + std::to_string(val) +
+            ret += "\n\taddiu $v0, $zero, 11"
+                   "\n\taddiu $a0, $zero, " + std::to_string(val) +
                    "\n\tsyscall";
         } else {
             if (i.first)
-                ret += "\n\taddi $v0, $zero, 11"
-                       "\n\taddi $a0, $zero, " + std::to_string('T') +
+                ret += "\n\taddiu $v0, $zero, 11"
+                       "\n\taddiu $a0, $zero, " + std::to_string('T') +
                        "\n\tsyscall"
-                       "\n\taddi $a0, $zero, " + std::to_string('r') +
+                       "\n\taddiu $a0, $zero, " + std::to_string('r') +
                        "\n\tsyscall"
-                       "\n\taddi $a0, $zero, " + std::to_string('u') +
+                       "\n\taddiu $a0, $zero, " + std::to_string('u') +
                        "\n\tsyscall"
-                       "\n\taddi $a0, $zero, " + std::to_string('e') +
+                       "\n\taddiu $a0, $zero, " + std::to_string('e') +
                        "\n\tsyscall";
             else
-                ret += "\n\taddi $v0, $zero, 11"
-                       "\n\taddi $a0, $zero, " + std::to_string('F') +
+                ret += "\n\taddiu $v0, $zero, 11"
+                       "\n\taddiu $a0, $zero, " + std::to_string('F') +
                        "\n\tsyscall"
-                       "\n\taddi $a0, $zero, " + std::to_string('a') +
+                       "\n\taddiu $a0, $zero, " + std::to_string('a') +
                        "\n\tsyscall"
-                       "\n\taddi $a0, $zero, " + std::to_string('l') +
+                       "\n\taddiu $a0, $zero, " + std::to_string('l') +
                        "\n\tsyscall"
-                       "\n\taddi $a0, $zero, " + std::to_string('s') +
+                       "\n\taddiu $a0, $zero, " + std::to_string('s') +
                        "\n\tsyscall"
-                       "\n\taddi $a0, $zero, " + std::to_string('e') +
+                       "\n\taddiu $a0, $zero, " + std::to_string('e') +
                        "\n\tsyscall";
         }
     }
