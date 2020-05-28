@@ -190,8 +190,8 @@ struct Keyword:
     sor<string<'i', 'f'>,
         string<'t', 'h', 'e', 'n'>,
         string<'e', 'l', 's', 'e'>,
-        string<'l', 'e', 't'>,
-        string<'i', 'n'>,
+        // string<'l', 'e', 't'>,
+        // string<'i', 'n'>,
         string<'d', 'a', 't', 'a'>> {};
 
 /**
