@@ -19,7 +19,7 @@
 
 namespace yacis {
 
-inline std::string compile_to_asm(std::string path) {
+inline std::string compile_to_asm(const std::string& path) {
     auto in = tao::pegtl::file_input(path);
     auto root = tao::pegtl::parse_tree::parse<yacis::grammar::Grammar,
                                               yacis::ast::BaseNode,

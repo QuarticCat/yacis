@@ -49,8 +49,8 @@ inline constexpr const char* tag_to_cstr(ast::NodeTag tag) {
     }
 }
 
-inline void print_tree(std::unique_ptr<ast::BaseNode>& root, int indent = 0) {
-    for (int i = 0; i < indent; ++i) std::cout.put(' ');
+inline void print_tree(std::unique_ptr<ast::BaseNode>& root, int32_t indent = 0) {
+    for (int32_t i = 0; i < indent; ++i) std::cout.put(' ');
     std::cout << "- " << tag_to_cstr(root->tag) << std::endl;
     for (auto&& i : root->children) print_tree(i, indent + 2);
 }
