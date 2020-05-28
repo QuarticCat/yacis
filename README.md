@@ -25,7 +25,7 @@ $ cmake .. -DCMAKE_BUILD_TYPE=Release -DAS_EXECUTABLE=ON
 $ cmake --build .
 ```
 
-Now you have a executable file named "yacis".
+Now you have an executable file named "yacis".
 
 Let's have a test:
 
