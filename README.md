@@ -2,7 +2,7 @@
 
 **CUHK(SZ) CSC3002 group project - compiler part**
 
-YACIS is short for "Yet Another Cpp Implementation for STLC (Simply Typed Lambda Calculus)".
+YACIS is short for "Yet Another C++ Implementation for STLC (Simply Typed Lambda Calculus)".
 
 ## Build
 
@@ -41,7 +41,7 @@ There are two ways to use the executable file:
 $ ./yacis <path-to-input-file>
 ```
 
-This will directly output the result.
+This will directly print the result.
 
 ```
 $ ./yacis <path-to-input-file> <path-to-output-file>
@@ -115,7 +115,7 @@ There are three basic types:
 - `Char`
 - `Bool` (`True` or `False`)
 
-The function type are combinations of them, like this:
+The function types are combinations of them, like this:
 
 ```
 Int -> Int -> Bool
@@ -158,11 +158,13 @@ All type names should start with a upper case letter.
 
 ### Application Expressions
 
-Application expressions is very simple:
+Application expressions are to apply a value to a function. It is very simple:
 
 ```
 <expression> <expression>
 ```
+
+`a b` means apply `b` to `a`.
 
 Note that this is left-combined. So these expressions are the same (don't forget currying):
 
@@ -188,7 +190,7 @@ if <expression> then <expression> else <expression>
 
 The first expression doesn't need to be `Bool` type. For `Int` and `Char`, it is true when the value is not zero. It can not be function type.
 
-The last two expressions shoule have the same type.
+The last two expressions should have the same type.
 
 The priority of conditional expressions is very low. So you can write:
 
@@ -212,7 +214,7 @@ Lambda expressions are like:
 \<arg-name>:<type> <arg-name>:<type> ... -> <expression>
 ```
 
-Arguments are sparated by white space(s).
+Arguments are separated by white space(s).
 
 Note that if the type is function type, you should add a bracket:
 
