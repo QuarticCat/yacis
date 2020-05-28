@@ -2,11 +2,11 @@ cmake_minimum_required(VERSION 3.12)
 
 project(yacis)
 
-SET(PEGTL_BUILD_TESTS OFF)
-SET(PEGTL_BUILD_EXAMPLES OFF)
+option(PEGTL_BUILD_TESTS OFF)
+option(PEGTL_BUILD_EXAMPLES OFF)
 add_subdirectory(${PROJECT_SOURCE_DIR}/third_party/pegtl)
 
-OPTION(AS_EXECUTABLE "" OFF)
+option(AS_EXECUTABLE OFF)
 
 if (AS_EXECUTABLE)
     if (MSVC)
