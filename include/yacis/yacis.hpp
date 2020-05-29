@@ -71,7 +71,6 @@ inline std::string compile_to_asm(const std::string& path) {
         }
     }
     // clang-format on
-
     return ret;
 }
 
