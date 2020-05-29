@@ -2,14 +2,13 @@
 #define YACIS_ANALYSIS_ERROR_HPP_
 
 #include <cstdlib>
+#include <exception>
 #include <iostream>
 #include <string>
 
 #include "tao/pegtl.hpp"
 
 namespace yacis::analysis {
-
-using iterator_t = tao::pegtl::internal::iterator;
 
 enum class ErrorType { kTypeError, kDefineError };
 
@@ -27,23 +26,43 @@ inline constexpr const char* error_type_to_cstr(ErrorType error_type) {
     }
 }
 
-[[noreturn]] void fatal_error(ErrorType error_type,
-                              iterator_t pos,
-                              const std::string& error_message) {
-    std::cout << pos.line << ":" << pos.byte_in_line << " - "
-              << error_type_to_cstr(error_type) << ": " << error_message;
-    std::exit(EXIT_FAILURE);
-}
+class CompileError: public std::exception {
+  public:
+    using pos_t = tao::pegtl::internal::iterator;
 
-[[noreturn]] void fatal_type_error(iterator_t pos,
-                                   const std::string& error_message) {
-    fatal_error(ErrorType::kTypeError, pos, error_message);
-}
+    CompileError(ErrorType type,
+                 pos_t pos,
+                 const std::string& error_message) noexcept:
+        message(std::to_string(pos.line) + ":" +
+                std::to_string(pos.byte_in_line) + " - " +
+                error_type_to_cstr(type) + ": " + error_message) {}
 
-[[noreturn]] void fatal_define_error(iterator_t pos,
-                                     const std::string& error_message) {
-    fatal_error(ErrorType::kDefineError, pos, error_message);
-}
+    CompileError(const CompileError& other) noexcept: message(other.message) {}
+
+    CompileError& operator=(const CompileError& other) noexcept {
+        message = other.message;
+        return *this;
+    }
+
+    [[nodiscard]] const char* what() const noexcept override {
+        return message.data();
+    }
+
+  private:
+    std::string message;
+};
+
+class TypeError: public CompileError {
+  public:
+    TypeError(pos_t pos, const std::string& error_message) noexcept:
+        CompileError(ErrorType::kTypeError, pos, error_message) {}
+};
+
+class DefineError: public CompileError {
+  public:
+    DefineError(pos_t pos, const std::string& error_message) noexcept:
+        CompileError(ErrorType::kDefineError, pos, error_message) {}
+};
 
 }  // namespace yacis::analysis
 

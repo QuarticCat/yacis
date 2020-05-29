@@ -86,10 +86,9 @@ class CheckVisitor: public ast::BaseVisitor {
     std::any visit(ast::VarNameNode& n) override {
         auto& name = n.info.name;
         if (!defined_table->contains(name))
-            fatal_define_error(n.m_begin, "Variable hasn't been defined.");
+            throw DefineError(n.m_begin, "Variable hasn't been defined.");
         if (!type_table->contains(name))
-            fatal_define_error(n.m_begin,
-                               "Variable hasn't been assigned type.");
+            throw TypeError(n.m_begin, "Variable hasn't been assigned type.");
         return (*type_table)[name];
     }
 
@@ -98,7 +97,7 @@ class CheckVisitor: public ast::BaseVisitor {
         if (type_table->contains(name))
             return (*type_table)[name];
         else
-            fatal_type_error(n.m_begin, "Type name doesn't exist.");
+            throw TypeError(n.m_begin, "Type name doesn't exist.");
     }
 
     std::any visit(ast::TypeNode& n) override {
@@ -119,7 +118,7 @@ class CheckVisitor: public ast::BaseVisitor {
             try {
                 func_type.apply(std::any_cast<Type>(call(*it)));
             } catch (const std::invalid_argument&) {
-                fatal_type_error((*it)->m_begin, "Not applicable");
+                throw TypeError((*it)->m_begin, "Not applicable");
             }
         }
         return func_type;
@@ -128,14 +127,14 @@ class CheckVisitor: public ast::BaseVisitor {
     std::any visit(ast::CondExprNode& n) override {
         auto if_type = std::any_cast<Type>(call(n.children[0]));
         if (if_type.tag == TypeTag::kFunction)
-            fatal_type_error(n.children[0]->m_begin,
-                             "If-expression can not be function.");
+            throw TypeError(n.children[0]->m_begin,
+                            "If-expression can not be function.");
         auto then_type = std::any_cast<Type>(call(n.children[1]));
         auto else_type = std::any_cast<Type>(call(n.children[2]));
         if (then_type != else_type)
-            fatal_type_error(n.children[1]->m_begin,
-                             "The type of then-expression should be the same as"
-                             "the type of else-expression.");
+            throw TypeError(n.children[1]->m_begin,
+                            "The type of then-expression should be the same as"
+                            "the type of else-expression.");
         return then_type;
     }
 
@@ -177,8 +176,8 @@ class CheckVisitor: public ast::BaseVisitor {
     std::any visit(ast::TypeAliasNode& n) override {
         auto& name = ast::as<ast::TypeNameNode>(n.children[0]).info.name;
         if (type_table->i_contains(name))
-            fatal_type_error(n.children[0]->m_begin,
-                             "Type name has already been defined.");
+            throw TypeError(n.children[0]->m_begin,
+                            "Type name has already been defined.");
         auto type = std::any_cast<Type>(call(n.children[1]));
         (*type_table)[name] = type;
         return std::any();
@@ -187,8 +186,8 @@ class CheckVisitor: public ast::BaseVisitor {
     std::any visit(ast::TypeAssignNode& n) override {
         auto& name = ast::as<ast::VarNameNode>(n.children[0]).info.name;
         if (type_table->i_contains(name))
-            fatal_type_error(n.children[0]->m_begin,
-                             "Variable has already been assigned type.");
+            throw TypeError(n.children[0]->m_begin,
+                            "Variable has already been assigned type.");
         auto type = std::any_cast<Type>(call(n.children[1]));
         (*type_table)[name] = type;
         return std::any();
@@ -197,14 +196,14 @@ class CheckVisitor: public ast::BaseVisitor {
     std::any visit(ast::ValueAssignNode& n) override {
         auto& name = ast::as<ast::VarNameNode>(n.children[0]).info.name;
         if (defined_table->i_contains(name))
-            fatal_define_error(n.children[0]->m_begin,
-                               "Variable has already been defined.");
+            throw DefineError(n.children[0]->m_begin,
+                              "Variable has already been defined.");
         (*defined_table)[name] = true;
         auto type = std::any_cast<Type>(call(n.children[1]));
         if (type_table->i_contains(name)) {
             if ((*type_table)[name] != type)
-                fatal_type_error(n.children[1]->m_begin,
-                                 "Can not match the assigned type.");
+                throw TypeError(n.children[1]->m_begin,
+                                "Can not match the assigned type.");
         } else {
             (*type_table)[name] = type;
         }
@@ -214,8 +213,8 @@ class CheckVisitor: public ast::BaseVisitor {
     std::any visit(ast::OutputNode& n) override {
         auto type = std::any_cast<Type>(call(n.children[0]));
         if (type.tag == TypeTag::kFunction)
-            fatal_type_error(n.children[0]->m_begin,
-                             "Output expression can not be function type.");
+            throw TypeError(n.children[0]->m_begin,
+                            "Output expression can not be function type.");
         n.info.type = type;
         return std::any();
     }
