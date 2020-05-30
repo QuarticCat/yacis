@@ -166,7 +166,7 @@ Application expressions are to apply a value to a function. It is very simple:
 
 `a b` means apply `b` to `a`.
 
-Note that this is left-combined. So these expressions are the same (don't forget currying):
+Note that this is left-associated. So these expressions are the same (don't forget currying):
 
 ```
 a b c d
@@ -222,7 +222,7 @@ Note that if the type is function type, you should add a bracket:
 \ f : (Int -> Int) -> f 1
 ```
 
-Lambda expressions are right-combined. So these expressions are equal:
+Lambda expressions are right-associated. So these expressions are equal:
 
 ```
 \a:Int -> \b:Char -> \c:Bool -> 0
