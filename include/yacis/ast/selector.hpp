@@ -72,7 +72,7 @@ struct Selector<grammar::CharLit>: std::true_type {
         convert_node<CharLitNode>(n);
         auto& node = as<CharLitNode>(n);
 
-        const char* b = node.m_begin.data;
+        const char* b = node.m_begin.data + 1;
         if (*b != '\\')
             node.info.value = *b;
         else
