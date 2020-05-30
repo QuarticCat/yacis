@@ -70,7 +70,7 @@ For details of APIs, please see `yacis/include/yacis/yacis.hpp`.
 
 ### Comments
 
-Comments are start with `--`. For example:
+Comments start with `--`. For example:
 
 ```
 -- This is a comment.
