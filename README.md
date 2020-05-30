@@ -255,37 +255,37 @@ negate : Int -> Int
 negate = \a:Int -> -a
 
 add : Int -> Int -> Int
-add = \a:Int b:int -> a + b
+add = \a:Int b:Int -> a + b
 
 sub : Int -> Int -> Int
-sub = \a:Int b:int -> a - b
+sub = \a:Int b:Int -> a - b
 
 mul : Int -> Int -> Int
-mul = \a:Int b:int -> a * b
+mul = \a:Int b:Int -> a * b
 
 div : Int -> Int -> Int
-div = \a:Int b:int -> a / b
+div = \a:Int b:Int -> a / b
 
 mod : Int -> Int -> Int
-mod = \a:Int b:int -> a % b
+mod = \a:Int b:Int -> a % b
 
 eq : Int -> Int -> Bool
-eq = \a:Int b:int -> a == b
+eq = \a:Int b:Int -> a == b
 
 neq : Int -> Int -> Bool
-neq = \a:Int b:int -> a != b
+neq = \a:Int b:Int -> a != b
 
 lt : Int -> Int -> Bool
-lt = \a:Int b:int -> a < b
+lt = \a:Int b:Int -> a < b
 
 gt : Int -> Int -> Bool
-gt = \a:Int b:int -> a > b
+gt = \a:Int b:Int -> a > b
 
 leq : Int -> Int -> Bool
-leq = \a:Int b:int -> a <= b
+leq = \a:Int b:Int -> a <= b
 
 geq : Int -> Int -> Bool
-geq = \a:Int b:int -> a >= b
+geq = \a:Int b:Int -> a >= b
 
 and : Bool -> Bool -> Bool
 and = \a:Bool b:Bool -> a && b
