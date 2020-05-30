@@ -2,6 +2,7 @@
 #define YACIS_YACIS_HPP_
 
 #include <string>
+#include <utility>
 
 #include "tao/pegtl/contrib/parse_tree.hpp"
 #include "yacis/analysis/check.hpp"
@@ -19,18 +20,23 @@
 
 namespace yacis {
 
+using file_input = tao::pegtl::file_input<>;
+using string_input = tao::pegtl::string_input<>;
+
+template<typename Input>
 inline std::vector<std::pair<int32_t, analysis::Type>>
-compile_to_output(const std::string& path) {
-    auto in = tao::pegtl::file_input(path);
+compile_to_output(Input&& input) {
     auto root = tao::pegtl::parse_tree::
-        parse<grammar::Grammar, ast::BaseNode, ast::Selector>(in);
+        parse<grammar::Grammar, ast::BaseNode, ast::Selector>(
+            std::forward<Input>(input));
     analysis::check(root);
     analysis::replace(root);
     return analysis::eval(root);
 }
 
-inline std::string compile_to_asm(const std::string& path) {
-    auto output = compile_to_output(path);
+template<typename Input>
+inline std::string compile_to_asm(Input&& input) {
+    auto output = compile_to_output(std::forward<Input>(input));
     // clang-format off
     std::string ret = "main:";
     for (const auto& i : output) {
