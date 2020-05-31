@@ -26,12 +26,16 @@ using string_input = tao::pegtl::string_input<>;
 template<typename Input>
 inline std::vector<std::pair<int32_t, analysis::Type>>
 compile_to_output(Input&& input) {
-    auto root = tao::pegtl::parse_tree::
-        parse<grammar::Grammar, ast::BaseNode, ast::Selector>(
-            std::forward<Input>(input));
-    analysis::check(root);
-    analysis::replace(root);
-    return analysis::eval(root);
+    try {
+        auto root = tao::pegtl::parse_tree::
+            parse<grammar::Grammar, ast::BaseNode, ast::Selector>(
+                std::forward<Input>(input));
+        analysis::check(root);
+        analysis::replace(root);
+        return analysis::eval(root);
+    } catch (const tao::pegtl::parse_error& e) {
+        throw analysis::ParseError(e.positions[0], "Syntax error.");
+    }
 }
 
 template<typename Input>

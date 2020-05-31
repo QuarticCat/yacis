@@ -45,6 +45,14 @@ class DefineError: public CompileError {
         CompileError(pos, "DefineError: " + error_message) {}
 };
 
+class ParseError: public CompileError {
+  public:
+    ParseError(const tao::pegtl::position& pos,
+               const std::string& error_message) noexcept:
+        CompileError({nullptr, pos.byte, pos.line, pos.byte_in_line},
+                     "ParseError: " + error_message) {}
+};
+
 }  // namespace yacis::analysis
 
 #endif  // YACIS_ANALYSIS_ERROR_HPP_
