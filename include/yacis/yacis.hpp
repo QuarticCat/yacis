@@ -41,11 +41,19 @@ inline std::string compile_to_asm(Input&& input) {
     std::string ret = "main:";
     for (const auto& i : output) {
         if (i.second == analysis::t_int) {
-            uint32_t val = i.first; // convert to unsigned for bit operations
-            ret += "\n\taddiu $v0, $zero, 1"
-                   "\n\tlui $a0, " + std::to_string(val & 0xffff0000u >> 16u) +
-                   "\n\taddiu $a0, $a0, " + std::to_string(val & 0x0000ffffu) +
-                   "\n\tsyscall";
+            uint32_t val = i.first;  // convert to unsigned for bit operations
+            if (val > 0x0000ffffu)
+                ret += "\n\taddiu $v0, $zero, 1"
+                       "\n\tlui $a0, " +
+                       std::to_string((val & 0xffff0000u) >> 16u) +
+                       "\n\taddiu $a0, $a0, " +
+                       std::to_string(val & 0x0000ffffu) +
+                       "\n\tsyscall";
+            else
+                ret += "\n\taddiu $v0, $zero, 1"
+                       "\n\taddiu $a0, $zero, " +
+                       std::to_string(val & 0x0000ffffu) +
+                       "\n\tsyscall";
         } else if (i.second == analysis::t_char) {
             char val = i.first;
             ret += "\n\taddiu $v0, $zero, 11"
