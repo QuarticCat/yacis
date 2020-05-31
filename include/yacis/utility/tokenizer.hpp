@@ -42,7 +42,7 @@ inline std::vector<Token> tokenize(const std::string& input) {
             ret.push_back({tmp, i, TokenTag::kIntLit});
         } else if (*i == '\'') {
             for (++i; *i != '\0' && (*i != '\'' || *(i - 1) == '\\'); ++i);
-            ret.push_back({tmp, i, TokenTag::kCharLit});
+            ret.push_back({tmp, *i == '\'' ? ++i : i, TokenTag::kCharLit});
         } else if (std::equal(i, i + 4, "True")) {
             ret.push_back({tmp, i += 4, TokenTag::kBoolLit});
         } else if (std::equal(i, i + 5, "False")) {
