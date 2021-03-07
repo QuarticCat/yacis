@@ -1,6 +1,6 @@
 # YACIS
 
-**CUHK(SZ) CSC3002 group project - compiler part**
+**This is part of my UG year 1 course project. It implements an interpreter for a Haskell-like simple language and exports some utilities for other parts of this project to integrate it and provide features like syntax highlighting.**
 
 YACIS is short for "Yet Another C++ Implementation for STLC (Simply Typed Lambda Calculus)".
 
@@ -8,12 +8,12 @@ YACIS is short for "Yet Another C++ Implementation for STLC (Simply Typed Lambda
 
 ### Requirements
 
-- CMake 3.12 or higher
+- CMake >= 3.12
 - One of:
-  - Clang 5 or higher
-  - GCC 7 or higher
-  - MSVC 2017 or higher
-- C++ 17 (set `-std=c++17` please)
+  - Clang >= 5
+  - GCC >= 7
+  - MSVC >= 2017
+- C++17
 
 ### Build as An Executable
 
